@@ -78,6 +78,19 @@ type SettlementsResponse = {
     }
 }
 
+type ConfigResponse = {
+    configured: boolean
+    mode: "test" | "live" | "unknown"
+    key_id_masked: string
+    account_id: string | null
+    webhook_endpoint: string
+    webhook_reachable: boolean
+    api_connected: boolean
+    api_error: string | null
+    emi_widget_enabled: boolean
+    methods_info: Record<string, { enabled: boolean; note: string }>
+}
+
 // ── Date defaults (computed once at module load) ───────────────────────────────
 
 const todayISO = new Date().toISOString().slice(0, 10)
@@ -533,9 +546,18 @@ const RazorpayPage = () => {
     const [expandedId, setExpandedId] = useState<string | null>(null)
     const [capturingId, setCapturingId] = useState<string | null>(null)
     const [refundingId, setRefundingId] = useState<string | null>(null)
-    const [activeTab, setActiveTab] = useState<"payments" | "settlements">("payments")
+    const [activeTab, setActiveTab] = useState<"payments" | "settlements" | "analytics" | "config">("payments")
 
     const perPage = 25
+
+    // ── Config query (lazy — only fetches when Config tab is active) ────────────
+    const { data: configData, isLoading: configLoading, refetch: refetchConfig } = useQuery<ConfigResponse>({
+        queryKey: ["rzp-config"],
+        queryFn: () => sdk.client.fetch<ConfigResponse>("/admin/custom/razorpay/config"),
+        staleTime: 5 * 60 * 1000,
+        enabled: activeTab === "config",
+        retry: false,
+    })
 
     const queryKey = ["rzp-payments", from, to, page, appliedSearch]
 
@@ -703,6 +725,26 @@ const RazorpayPage = () => {
                     }`}
                 >
                     Settlements
+                </button>
+                <button
+                    onClick={() => setActiveTab("analytics")}
+                    className={`px-4 py-1.5 rounded text-sm font-medium transition-colors ${
+                        activeTab === "analytics"
+                            ? "bg-ui-bg-interactive text-ui-fg-on-color"
+                            : "bg-ui-bg-subtle text-ui-fg-subtle hover:bg-ui-bg-subtle-hover"
+                    }`}
+                >
+                    Analytics
+                </button>
+                <button
+                    onClick={() => setActiveTab("config")}
+                    className={`px-4 py-1.5 rounded text-sm font-medium transition-colors ${
+                        activeTab === "config"
+                            ? "bg-ui-bg-interactive text-ui-fg-on-color"
+                            : "bg-ui-bg-subtle text-ui-fg-subtle hover:bg-ui-bg-subtle-hover"
+                    }`}
+                >
+                    Config
                 </button>
             </div>
 
@@ -904,6 +946,314 @@ const RazorpayPage = () => {
             {/* ── Settlements Tab ── */}
             {activeTab === "settlements" && (
                 <SettlementsSection from={from} to={to} />
+            )}
+
+            {/* ── Analytics Tab ── */}
+            {activeTab === "analytics" && (
+                <div className="flex flex-col gap-6">
+                    {isLoading ? (
+                        <Container>
+                            <div className="py-8 text-center">
+                                <Text className="text-ui-fg-subtle">Loading analytics…</Text>
+                            </div>
+                        </Container>
+                    ) : payments.length === 0 ? (
+                        <Container>
+                            <div className="py-12 text-center">
+                                <Text className="text-ui-fg-subtle">No payment data for the selected range.</Text>
+                            </div>
+                        </Container>
+                    ) : (() => {
+                        // Compute method performance from loaded payments
+                        const methodStats: Record<string, { count: number; total: number; refunded: number; fees: number; tax: number }> = {}
+                        let totalFees = 0
+                        let totalTax  = 0
+                        let totalNet  = 0
+
+                        for (const p of payments) {
+                            const m = p.method ?? "other"
+                            if (!methodStats[m]) methodStats[m] = { count: 0, total: 0, refunded: 0, fees: 0, tax: 0 }
+                            if (p.status === "captured" || p.status === "refunded") {
+                                methodStats[m].count   += 1
+                                methodStats[m].total   += p.amount
+                                methodStats[m].refunded += p.amount_refunded ?? 0
+                                methodStats[m].fees    += p.fee ?? 0
+                                methodStats[m].tax     += p.tax ?? 0
+                                totalFees += p.fee ?? 0
+                                totalTax  += p.tax ?? 0
+                                totalNet  += p.amount - (p.amount_refunded ?? 0) - (p.fee ?? 0) - (p.tax ?? 0)
+                            }
+                        }
+
+                        const methodRows = Object.entries(methodStats).sort((a, b) => b[1].total - a[1].total)
+                        const grandTotal = methodRows.reduce((s, [, v]) => s + v.total, 0)
+
+                        return (
+                            <>
+                                {/* Method Performance */}
+                                <Container>
+                                    <div className="mb-4">
+                                        <Heading level="h2">Method Performance</Heading>
+                                        <Text size="small" className="text-ui-fg-subtle mt-1">
+                                            Revenue breakdown by payment method for captured payments in this date range
+                                        </Text>
+                                    </div>
+                                    <Table>
+                                        <Table.Header>
+                                            <Table.Row>
+                                                <Table.HeaderCell>Method</Table.HeaderCell>
+                                                <Table.HeaderCell>Transactions</Table.HeaderCell>
+                                                <Table.HeaderCell>Gross Amount</Table.HeaderCell>
+                                                <Table.HeaderCell>Refunded</Table.HeaderCell>
+                                                <Table.HeaderCell>Net Revenue</Table.HeaderCell>
+                                                <Table.HeaderCell>Share</Table.HeaderCell>
+                                            </Table.Row>
+                                        </Table.Header>
+                                        <Table.Body>
+                                            {methodRows.map(([method, s]) => {
+                                                const net = s.total - s.refunded
+                                                const pct = grandTotal > 0 ? ((s.total / grandTotal) * 100).toFixed(1) : "0.0"
+                                                return (
+                                                    <Table.Row key={method}>
+                                                        <Table.Cell>
+                                                            <Badge color={METHOD_COLOR[method] ?? "grey"} size="xsmall">
+                                                                {method}
+                                                            </Badge>
+                                                        </Table.Cell>
+                                                        <Table.Cell>
+                                                            <Text size="small">{s.count}</Text>
+                                                        </Table.Cell>
+                                                        <Table.Cell>
+                                                            <Text size="small" weight="plus">{inr(s.total)}</Text>
+                                                        </Table.Cell>
+                                                        <Table.Cell>
+                                                            <Text size="small" className="text-ui-fg-error">
+                                                                {s.refunded > 0 ? `−${inr(s.refunded)}` : "—"}
+                                                            </Text>
+                                                        </Table.Cell>
+                                                        <Table.Cell>
+                                                            <Text size="small" weight="plus" className="text-ui-fg-interactive">
+                                                                {inr(net)}
+                                                            </Text>
+                                                        </Table.Cell>
+                                                        <Table.Cell>
+                                                            <div className="flex items-center gap-2">
+                                                                <div
+                                                                    className="h-2 rounded-full bg-ui-bg-interactive"
+                                                                    style={{ width: `${pct}%`, minWidth: 4, maxWidth: 80 }}
+                                                                />
+                                                                <Text size="xsmall" className="text-ui-fg-muted">{pct}%</Text>
+                                                            </div>
+                                                        </Table.Cell>
+                                                    </Table.Row>
+                                                )
+                                            })}
+                                        </Table.Body>
+                                    </Table>
+                                </Container>
+
+                                {/* Transaction Fees Summary */}
+                                <Container>
+                                    <div className="mb-4">
+                                        <Heading level="h2">Transaction Fees Summary</Heading>
+                                        <Text size="small" className="text-ui-fg-subtle mt-1">
+                                            Platform fees and GST deducted by Razorpay for captured payments in this date range
+                                        </Text>
+                                    </div>
+                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                        <div className="border border-ui-border-base rounded-lg p-4 bg-ui-bg-subtle">
+                                            <Text size="xsmall" className="text-ui-fg-subtle">Razorpay Fees</Text>
+                                            <Heading level="h2" className="text-ui-fg-base mt-1">{inr(totalFees)}</Heading>
+                                        </div>
+                                        <div className="border border-ui-border-base rounded-lg p-4 bg-ui-bg-subtle">
+                                            <Text size="xsmall" className="text-ui-fg-subtle">GST on Fees</Text>
+                                            <Heading level="h2" className="text-ui-fg-base mt-1">{inr(totalTax)}</Heading>
+                                        </div>
+                                        <div className="border border-ui-border-base rounded-lg p-4 bg-ui-bg-subtle">
+                                            <Text size="xsmall" className="text-ui-fg-subtle">Total Deducted</Text>
+                                            <Heading level="h2" className="text-ui-fg-base mt-1">{inr(totalFees + totalTax)}</Heading>
+                                        </div>
+                                        <div className="border border-ui-border-base rounded-lg p-4 bg-ui-bg-subtle">
+                                            <Text size="xsmall" className="text-ui-fg-subtle">Net Revenue (estimate)</Text>
+                                            <Heading level="h2" className="text-ui-fg-interactive mt-1">{inr(totalNet)}</Heading>
+                                            <Text size="xsmall" className="text-ui-fg-muted mt-0.5">
+                                                gross − refunds − fees − GST
+                                            </Text>
+                                        </div>
+                                    </div>
+                                    <Text size="xsmall" className="text-ui-fg-muted mt-3">
+                                        * Fee data is only available for payments already settled or with fee details from Razorpay.
+                                          Reload with a larger date range + count for full accuracy.
+                                    </Text>
+                                </Container>
+                            </>
+                        )
+                    })()}
+                </div>
+            )}
+
+            {/* ── Config Tab ── */}
+            {activeTab === "config" && (
+                <div className="flex flex-col gap-6">
+                    {configLoading ? (
+                        <Container>
+                            <div className="py-8 text-center">
+                                <Text className="text-ui-fg-subtle">Checking configuration…</Text>
+                            </div>
+                        </Container>
+                    ) : !configData ? (
+                        <Container>
+                            <div className="py-8 text-center">
+                                <Text className="text-ui-fg-error">Failed to load configuration.</Text>
+                            </div>
+                        </Container>
+                    ) : (
+                        <>
+                            {/* ── Connection Status ── */}
+                            <Container>
+                                <div className="mb-4 flex items-center justify-between">
+                                    <Heading level="h2">Gateway Status</Heading>
+                                    <Button variant="secondary" size="small" onClick={() => refetchConfig()}>
+                                        ↻ Re-check
+                                    </Button>
+                                </div>
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                    <div className="border border-ui-border-base rounded-lg p-4 bg-ui-bg-subtle">
+                                        <Text size="xsmall" className="text-ui-fg-subtle">Mode</Text>
+                                        <div className="mt-2">
+                                            <Badge
+                                                color={configData.mode === "live" ? "green" : configData.mode === "test" ? "orange" : "grey"}
+                                                size="xsmall"
+                                            >
+                                                {configData.mode === "live" ? "🟢 LIVE" : configData.mode === "test" ? "🟡 TEST" : "Unknown"}
+                                            </Badge>
+                                        </div>
+                                        <Text size="xsmall" className="text-ui-fg-muted mt-1 font-mono">
+                                            {configData.key_id_masked}
+                                        </Text>
+                                    </div>
+                                    <div className="border border-ui-border-base rounded-lg p-4 bg-ui-bg-subtle">
+                                        <Text size="xsmall" className="text-ui-fg-subtle">API Connectivity</Text>
+                                        <div className="mt-2">
+                                            <Badge color={configData.api_connected ? "green" : "red"} size="xsmall">
+                                                {configData.api_connected ? "Connected" : "Failed"}
+                                            </Badge>
+                                        </div>
+                                        {configData.api_error && (
+                                            <Text size="xsmall" className="text-ui-fg-error mt-1">
+                                                {configData.api_error}
+                                            </Text>
+                                        )}
+                                    </div>
+                                    <div className="border border-ui-border-base rounded-lg p-4 bg-ui-bg-subtle">
+                                        <Text size="xsmall" className="text-ui-fg-subtle">Webhook Health</Text>
+                                        <div className="mt-2">
+                                            <Badge color={configData.webhook_reachable ? "green" : "red"} size="xsmall">
+                                                {configData.webhook_reachable ? "Reachable" : "Unreachable"}
+                                            </Badge>
+                                        </div>
+                                        <Text size="xsmall" className="text-ui-fg-muted mt-1 break-all font-mono">
+                                            {configData.webhook_endpoint}
+                                        </Text>
+                                    </div>
+                                    <div className="border border-ui-border-base rounded-lg p-4 bg-ui-bg-subtle">
+                                        <Text size="xsmall" className="text-ui-fg-subtle">EMI Widget</Text>
+                                        <div className="mt-2">
+                                            <Badge color={configData.emi_widget_enabled ? "green" : "grey"} size="xsmall">
+                                                {configData.emi_widget_enabled ? "Enabled" : "Disabled"}
+                                            </Badge>
+                                        </div>
+                                        <Text size="xsmall" className="text-ui-fg-muted mt-1">
+                                            Set RAZORPAY_EMI_ENABLED=false to disable
+                                        </Text>
+                                    </div>
+                                </div>
+
+                                {configData.mode === "test" && (
+                                    <div className="mt-4 p-3 rounded-lg border border-amber-300 bg-amber-50">
+                                        <Text size="small" weight="plus" className="text-amber-700">
+                                            ⚠ Test Mode Active
+                                        </Text>
+                                        <Text size="small" className="text-amber-600 mt-0.5">
+                                            No real money will be charged. Switch to live keys in .env before going to production.
+                                        </Text>
+                                    </div>
+                                )}
+                            </Container>
+
+                            {/* ── Webhook Setup ── */}
+                            <Container>
+                                <Heading level="h2" className="mb-4">Webhook Configuration</Heading>
+                                <div className="flex flex-col gap-3">
+                                    <div>
+                                        <Text size="small" weight="plus" className="text-ui-fg-subtle">Endpoint URL</Text>
+                                        <div className="flex items-center gap-2 mt-1">
+                                            <code className="text-sm font-mono bg-ui-bg-subtle px-3 py-1.5 rounded border border-ui-border-base text-ui-fg-base flex-1">
+                                                {configData.webhook_endpoint}
+                                            </code>
+                                            <Button
+                                                variant="secondary"
+                                                size="small"
+                                                onClick={() => {
+                                                    navigator.clipboard.writeText(configData.webhook_endpoint)
+                                                    toast.success("Copied")
+                                                }}
+                                            >
+                                                Copy
+                                            </Button>
+                                        </div>
+                                    </div>
+                                    <Text size="small" className="text-ui-fg-subtle">
+                                        Add this URL to your{" "}
+                                        <button
+                                            onClick={() => window.open("https://dashboard.razorpay.com/app/webhooks", "_blank", "noopener,noreferrer")}
+                                            className="text-ui-fg-interactive hover:underline"
+                                        >
+                                            Razorpay Dashboard → Settings → Webhooks ↗
+                                        </button>
+                                        {" "}and subscribe to: payment.authorized, payment.captured, payment.failed,
+                                        refund.processed.
+                                    </Text>
+                                </div>
+                            </Container>
+
+                            {/* ── Payment Methods Info ── */}
+                            <Container>
+                                <div className="mb-4">
+                                    <Heading level="h2">Payment Methods</Heading>
+                                    <Text size="small" className="text-ui-fg-subtle mt-1">
+                                        Method availability is managed in the Razorpay Dashboard, not in code.
+                                    </Text>
+                                </div>
+                                <div className="flex flex-col gap-3">
+                                    {Object.entries(configData.methods_info).map(([method, info]) => (
+                                        <div key={method} className="flex items-start gap-4 py-2 border-b border-ui-border-base last:border-0">
+                                            <div className="w-24 shrink-0">
+                                                <Badge color={METHOD_COLOR[method] ?? "grey"} size="xsmall">{method.toUpperCase()}</Badge>
+                                            </div>
+                                            <div className="flex items-center gap-2 shrink-0">
+                                                <div className={`w-2 h-2 rounded-full ${info.enabled ? "bg-green-500" : "bg-ui-fg-muted"}`} />
+                                                <Text size="xsmall" className={info.enabled ? "text-green-700" : "text-ui-fg-muted"}>
+                                                    {info.enabled ? "Enabled" : "Disabled"}
+                                                </Text>
+                                            </div>
+                                            <Text size="xsmall" className="text-ui-fg-muted">{info.note}</Text>
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="mt-4">
+                                    <Button
+                                        variant="secondary"
+                                        size="small"
+                                        onClick={() => window.open("https://dashboard.razorpay.com/app/payment-methods", "_blank", "noopener,noreferrer")}
+                                    >
+                                        Manage in Razorpay Dashboard ↗
+                                    </Button>
+                                </div>
+                            </Container>
+                        </>
+                    )}
+                </div>
             )}
         </div>
     )
