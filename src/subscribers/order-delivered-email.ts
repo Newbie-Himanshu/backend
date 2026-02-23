@@ -62,4 +62,5 @@ export default async function orderDeliveredEmailHandler({
 
 export const config: SubscriberConfig = {
     event: "order.fulfillment_delivered",
+    context: { subscriberId: "vridhira-order-delivered-email" },
 }

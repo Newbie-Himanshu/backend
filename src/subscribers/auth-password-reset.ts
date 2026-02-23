@@ -86,4 +86,5 @@ export default async function authPasswordResetHandler({
 
 export const config: SubscriberConfig = {
     event: "auth.password_reset",
+    context: { subscriberId: "vridhira-auth-password-reset" },
 }

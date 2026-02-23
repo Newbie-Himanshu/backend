@@ -122,4 +122,5 @@ export default async function orderPlacedHandler({
 
 export const config: SubscriberConfig = {
     event: "order.placed",
+    context: { subscriberId: "vridhira-order-placed-fulfillment" },
 }

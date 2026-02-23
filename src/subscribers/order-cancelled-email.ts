@@ -29,4 +29,5 @@ export default async function orderCancelledEmailHandler({
 
 export const config: SubscriberConfig = {
     event: "order.canceled",
+    context: { subscriberId: "vridhira-order-cancelled-email" },
 }
