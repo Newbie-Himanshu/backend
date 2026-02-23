@@ -36,6 +36,7 @@
     "@rsc-labs/medusa-documents-v2": "^0.2.11",
     "medusa-plugin-razorpay-v2": "^0.1.4",
     "medusa-variant-images": "^1.1.4",
+    "razorpay": "^2.9.6",
     "resend": "6.9.2"
   },
   "devDependencies": {

@@ -22450,6 +22450,7 @@ __metadata:
     medusa-plugin-razorpay-v2: "npm:^0.1.4"
     medusa-variant-images: "npm:^1.1.4"
     prop-types: "npm:^15.8.1"
+    razorpay: "npm:^2.9.6"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     react-email: "npm:latest"
