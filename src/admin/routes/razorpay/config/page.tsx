@@ -8,10 +8,11 @@ import {
     toast,
 } from "@medusajs/ui"
 import { useQuery } from "@tanstack/react-query"
-import { ConfigResponse, METHOD_COLOR } from "../../../lib/razorpay-shared"
+import { ConfigResponse, HOTKEYS, Kbd, METHOD_COLOR, useRazorpayHotkeys } from "../../../lib/razorpay-shared"
 import { sdk } from "../../../lib/sdk"
 
 const ConfigPage = () => {
+    useRazorpayHotkeys()
     const { data, isLoading, error, refetch, isRefetching } = useQuery<ConfigResponse>({
         queryKey: ["rzp-config"],
         queryFn: () => sdk.client.fetch<ConfigResponse>("/admin/custom/razorpay/config"),
@@ -24,7 +25,10 @@ const ConfigPage = () => {
             {/* Page header */}
             <div className="flex items-center justify-between flex-wrap gap-3">
                 <div>
-                    <Heading>Configuration</Heading>
+                    <div className="flex items-center gap-3">
+                        <Heading>Configuration</Heading>
+                        <Kbd className="text-ui-fg-muted">{HOTKEYS.config.keys}</Kbd>
+                    </div>
                     <Text size="small" className="text-ui-fg-subtle mt-1">
                         Gateway mode, API connectivity, webhook health and payment methods
                     </Text>

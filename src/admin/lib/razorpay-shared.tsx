@@ -6,13 +6,87 @@
 import {
     Badge,
     Button,
+    Kbd,
     Text,
     Heading,
     toast,
 } from "@medusajs/ui"
 import { useQuery, useMutation } from "@tanstack/react-query"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { sdk } from "./sdk"
+
+// Re-export Kbd so pages only need one import source
+export { Kbd }
+
+// ── Keyboard shortcut definitions ─────────────────────────────────────────────
+// Follows Medusa's own G+X two-stroke pattern.
+// Safe second keys — confirmed NOT used by Medusa core:
+//   G O=Orders  G P=Products  G C=Customers  G T=Inventory
+//   G M=Promotions  G S=Settings  G L=Pricelists  G D=Discounts
+export const HOTKEYS = {
+    overview:    { keys: "G R", path: "/app/razorpay" },
+    payments:    { keys: "G 1", path: "/app/razorpay/payments" },
+    settlements: { keys: "G 2", path: "/app/razorpay/settlements" },
+    analytics:   { keys: "G 3", path: "/app/razorpay/analytics" },
+    config:      { keys: "G 4", path: "/app/razorpay/config" },
+} as const
+
+/**
+ * Registers the Razorpay G+X keyboard shortcuts for the duration the
+ * component is mounted. Ignores events fired while focus is inside any
+ * input, textarea, select, or contenteditable element so the shortcuts
+ * never interfere with typing.
+ */
+export function useRazorpayHotkeys() {
+    useEffect(() => {
+        let gPressed = false
+        let gTimer: ReturnType<typeof setTimeout> | null = null
+
+        const handler = (e: KeyboardEvent) => {
+            // Never steal keystrokes from form elements
+            const tag = (e.target as HTMLElement)?.tagName?.toUpperCase()
+            if (
+                tag === "INPUT" ||
+                tag === "TEXTAREA" ||
+                tag === "SELECT" ||
+                (e.target as HTMLElement)?.isContentEditable
+            ) return
+
+            // Step 1 — capture the G prefix
+            if (e.key === "g" || e.key === "G") {
+                e.preventDefault()
+                gPressed = true
+                if (gTimer) clearTimeout(gTimer)
+                // Expire the prefix after 1.5 s if no follow-up key
+                gTimer = setTimeout(() => { gPressed = false }, 1500)
+                return
+            }
+
+            // Step 2 — act on the follow-up key
+            if (gPressed) {
+                gPressed = false
+                if (gTimer) { clearTimeout(gTimer); gTimer = null }
+
+                const dest: string | undefined = {
+                    r: HOTKEYS.overview.path,
+                    R: HOTKEYS.overview.path,
+                    "1": HOTKEYS.payments.path,
+                    "2": HOTKEYS.settlements.path,
+                    "3": HOTKEYS.analytics.path,
+                    "4": HOTKEYS.config.path,
+                }[e.key]
+
+                if (dest) {
+                    e.preventDefault()
+                    window.location.href = dest
+                }
+            }
+        }
+
+        document.addEventListener("keydown", handler)
+        return () => document.removeEventListener("keydown", handler)
+    }, [])
+}
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 

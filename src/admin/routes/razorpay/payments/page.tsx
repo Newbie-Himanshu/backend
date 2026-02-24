@@ -11,6 +11,8 @@ import { useQuery } from "@tanstack/react-query"
 import { useCallback, useState } from "react"
 import {
     CapturePanel,
+    HOTKEYS,
+    Kbd,
     METHOD_COLOR,
     PaymentDetailRow,
     PaymentsResponse,
@@ -22,10 +24,12 @@ import {
     thirtyDaysAgoISO,
     todayISO,
     toUnix,
+    useRazorpayHotkeys,
 } from "../../../lib/razorpay-shared"
 import { sdk } from "../../../lib/sdk"
 
 const PaymentsPage = () => {
+    useRazorpayHotkeys()
     const [from, setFrom] = useState(thirtyDaysAgoISO)
     const [to, setTo] = useState(todayISO)
     const [search, setSearch] = useState("")
@@ -72,7 +76,10 @@ const PaymentsPage = () => {
             {/* Page header */}
             <div className="flex items-center justify-between flex-wrap gap-3">
                 <div>
-                    <Heading>Payments</Heading>
+                    <div className="flex items-center gap-3">
+                        <Heading>Payments</Heading>
+                        <Kbd className="text-ui-fg-muted">{HOTKEYS.payments.keys}</Kbd>
+                    </div>
                     <Text size="small" className="text-ui-fg-subtle mt-1">
                         Search, capture and refund Razorpay payments
                     </Text>

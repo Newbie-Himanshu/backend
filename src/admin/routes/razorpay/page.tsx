@@ -3,12 +3,15 @@ import { CurrencyDollar } from "@medusajs/icons"
 import { Badge, Button, Container, Heading, Text } from "@medusajs/ui"
 import { useQuery } from "@tanstack/react-query"
 import {
+    HOTKEYS,
+    Kbd,
     METHOD_COLOR,
     PaymentsResponse,
     SummaryCard,
     inr,
     todayISO,
     toUnix,
+    useRazorpayHotkeys,
 } from "../../lib/razorpay-shared"
 import { sdk } from "../../lib/sdk"
 
@@ -21,6 +24,7 @@ import { sdk } from "../../lib/sdk"
 //   src/admin/routes/razorpay/config/page.tsx      → /app/razorpay/config
 
 const RazorpayOverviewPage = () => {
+    useRazorpayHotkeys()
     // Fetch today's snapshot — lightweight, cached 5 min
     const { data, isLoading } = useQuery<PaymentsResponse>({
         queryKey: ["rzp-overview-today"],
@@ -43,7 +47,8 @@ const RazorpayOverviewPage = () => {
     const childPages = [
         {
             label: "Payments",
-            href:  "/app/razorpay/payments",
+            href:  HOTKEYS.payments.path,
+            hotkey: HOTKEYS.payments.keys,
             desc:  "View, search, capture and refund individual payment transactions",
             badge: summary?.pending_captures
                 ? { text: `${summary.pending_captures} pending`, color: "orange" as const }
@@ -51,19 +56,22 @@ const RazorpayOverviewPage = () => {
         },
         {
             label: "Settlements",
-            href:  "/app/razorpay/settlements",
+            href:  HOTKEYS.settlements.path,
+            hotkey: HOTKEYS.settlements.keys,
             desc:  "Track Razorpay settlement batches and UTR references",
             badge: null,
         },
         {
             label: "Analytics",
-            href:  "/app/razorpay/analytics",
+            href:  HOTKEYS.analytics.path,
+            hotkey: HOTKEYS.analytics.keys,
             desc:  "Success rates, failure alerts, method breakdown and fee analysis",
             badge: null,
         },
         {
             label: "Config",
-            href:  "/app/razorpay/config",
+            href:  HOTKEYS.config.path,
+            hotkey: HOTKEYS.config.keys,
             desc:  "Gateway mode, API connectivity, webhook health and payment methods",
             badge: null,
         },
@@ -74,7 +82,10 @@ const RazorpayOverviewPage = () => {
             {/* ── Header ── */}
             <div className="flex items-center justify-between flex-wrap gap-3">
                 <div>
-                    <Heading>Razorpay</Heading>
+                    <div className="flex items-center gap-3">
+                        <Heading>Razorpay</Heading>
+                        <Kbd className="text-ui-fg-muted">{HOTKEYS.overview.keys}</Kbd>
+                    </div>
                     <Text size="small" className="text-ui-fg-subtle mt-1">
                         Today's overview — use the sidebar or cards below to navigate
                     </Text>
@@ -135,6 +146,7 @@ const RazorpayOverviewPage = () => {
                             {item.badge && (
                                 <Badge color={item.badge.color} size="xsmall">{item.badge.text}</Badge>
                             )}
+                            <Kbd className="ml-auto text-ui-fg-muted">{item.hotkey}</Kbd>
                         </div>
                         <Text size="small" className="text-ui-fg-muted">{item.desc}</Text>
                     </button>

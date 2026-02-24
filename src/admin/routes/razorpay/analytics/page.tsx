@@ -10,16 +10,20 @@ import {
 import { useQuery } from "@tanstack/react-query"
 import { useState } from "react"
 import {
+    HOTKEYS,
+    Kbd,
     METHOD_COLOR,
     PaymentsResponse,
     inr,
     thirtyDaysAgoISO,
     todayISO,
     toUnix,
+    useRazorpayHotkeys,
 } from "../../../lib/razorpay-shared"
 import { sdk } from "../../../lib/sdk"
 
 const AnalyticsPage = () => {
+    useRazorpayHotkeys()
     const [from, setFrom] = useState(thirtyDaysAgoISO)
     const [to, setTo] = useState(todayISO)
     // Load up to 500 payments so analytics are meaningful
@@ -47,7 +51,10 @@ const AnalyticsPage = () => {
             {/* Page header */}
             <div className="flex items-center justify-between flex-wrap gap-3">
                 <div>
-                    <Heading>Analytics</Heading>
+                    <div className="flex items-center gap-3">
+                        <Heading>Analytics</Heading>
+                        <Kbd className="text-ui-fg-muted">{HOTKEYS.analytics.keys}</Kbd>
+                    </div>
                     <Text size="small" className="text-ui-fg-subtle mt-1">
                         Success rates, method breakdown and fee analysis across up to {count} payments
                     </Text>

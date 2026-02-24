@@ -10,16 +10,20 @@ import {
 import { useQuery } from "@tanstack/react-query"
 import { useState } from "react"
 import {
+    HOTKEYS,
+    Kbd,
     SettlementsResponse,
     fmtDate,
     inr,
     thirtyDaysAgoISO,
     todayISO,
     toUnix,
+    useRazorpayHotkeys,
 } from "../../../lib/razorpay-shared"
 import { sdk } from "../../../lib/sdk"
 
 const SettlementsPage = () => {
+    useRazorpayHotkeys()
     const [from, setFrom] = useState(thirtyDaysAgoISO)
     const [to, setTo] = useState(todayISO)
     const [page, setPage] = useState(1)
@@ -45,7 +49,10 @@ const SettlementsPage = () => {
             {/* Page header */}
             <div className="flex items-center justify-between flex-wrap gap-3">
                 <div>
-                    <Heading>Settlements</Heading>
+                    <div className="flex items-center gap-3">
+                        <Heading>Settlements</Heading>
+                        <Kbd className="text-ui-fg-muted">{HOTKEYS.settlements.keys}</Kbd>
+                    </div>
                     <Text size="small" className="text-ui-fg-subtle mt-1">
                         Razorpay settlement batches and UTR references
                     </Text>
