@@ -320,6 +320,7 @@ const PaymentsPage = () => {
 
 export const config = defineRouteConfig({
     label: "Payments",
+    rank: 2,
 })
 
 export const handle = {

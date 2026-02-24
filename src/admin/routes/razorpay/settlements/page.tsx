@@ -211,6 +211,7 @@ const SettlementsPage = () => {
 
 export const config = defineRouteConfig({
     label: "Settlements",
+    rank: 3,
 })
 
 export const handle = {

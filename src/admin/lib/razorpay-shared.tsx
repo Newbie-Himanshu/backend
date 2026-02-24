@@ -19,28 +19,57 @@ import { sdk } from "./sdk"
 export { Kbd }
 
 // ── Keyboard shortcut definitions ─────────────────────────────────────────────
-// Follows Medusa's own G+X two-stroke pattern.
-// Safe second keys — confirmed NOT used by Medusa core:
+// Three-stroke G → Z → X pattern (child letters are alphabetical by page name):
+//   G Z        → Razorpay Overview  (waits 600 ms then navigates if no digit follows)
+//   G Z A      → Analytics
+//   G Z C      → Config
+//   G Z P      → Payments
+//   G Z S      → Settlements
+// Third-stroke letters are safe — Medusa G+C / G+P / G+S collisions are
+// two-stroke only; our G Z * prefix means they can never clash.
+// Safe two-stroke context (second key Z): not used by Medusa core.
 //   G O=Orders  G P=Products  G C=Customers  G T=Inventory
-//   G M=Promotions  G S=Settings  G L=Pricelists  G D=Discounts
+//   G M=Promotions  G S=Settings  G L=Pricelists  G D=Discounts  G R=Reservations
 export const HOTKEYS = {
-    overview:    { keys: "G R", path: "/app/razorpay" },
-    payments:    { keys: "G 1", path: "/app/razorpay/payments" },
-    settlements: { keys: "G 2", path: "/app/razorpay/settlements" },
-    analytics:   { keys: "G 3", path: "/app/razorpay/analytics" },
-    config:      { keys: "G 4", path: "/app/razorpay/config" },
+    overview:    { keys: "G Z",   path: "/app/razorpay" },
+    analytics:   { keys: "G Z A", path: "/app/razorpay/analytics" },
+    config:      { keys: "G Z C", path: "/app/razorpay/config" },
+    payments:    { keys: "G Z P", path: "/app/razorpay/payments" },
+    settlements: { keys: "G Z S", path: "/app/razorpay/settlements" },
 } as const
 
 /**
- * Registers the Razorpay G+X keyboard shortcuts for the duration the
- * component is mounted. Ignores events fired while focus is inside any
- * input, textarea, select, or contenteditable element so the shortcuts
- * never interfere with typing.
+ * Registers the Razorpay G→Z→X three-stroke keyboard shortcuts.
+ *
+ * State machine:
+ *   none → (G) → gActive → (Z) → gzActive → (1-4) → navigate to child
+ *                                          → (600 ms timeout) → navigate to overview
+ *                           → (1.5 s timeout) → none
+ *
+ * Ignores events fired while focus is inside any input, textarea, select,
+ * or contenteditable element so shortcuts never interfere with typing.
  */
 export function useRazorpayHotkeys() {
     useEffect(() => {
-        let gPressed = false
+        // Stage 1: G was pressed
+        let gActive = false
         let gTimer: ReturnType<typeof setTimeout> | null = null
+
+        // Stage 2: G then Z was pressed — pending overview vs child
+        let gzActive = false
+        let gzTimer: ReturnType<typeof setTimeout> | null = null
+
+        const clearAll = () => {
+            gActive = false
+            gzActive = false
+            if (gTimer)  { clearTimeout(gTimer);  gTimer  = null }
+            if (gzTimer) { clearTimeout(gzTimer); gzTimer = null }
+        }
+
+        const navigate = (dest: string) => {
+            clearAll()
+            window.location.href = dest
+        }
 
         const handler = (e: KeyboardEvent) => {
             // Never steal keystrokes from form elements
@@ -52,39 +81,58 @@ export function useRazorpayHotkeys() {
                 (e.target as HTMLElement)?.isContentEditable
             ) return
 
-            // Step 1 — capture the G prefix
+            // ── Stage 1: G prefix ──────────────────────────────────────────
             if (e.key === "g" || e.key === "G") {
                 e.preventDefault()
-                gPressed = true
-                if (gTimer) clearTimeout(gTimer)
-                // Expire the prefix after 1.5 s if no follow-up key
-                gTimer = setTimeout(() => { gPressed = false }, 1500)
+                clearAll()
+                gActive = true
+                gTimer = setTimeout(() => { gActive = false }, 1500)
                 return
             }
 
-            // Step 2 — act on the follow-up key
-            if (gPressed) {
-                gPressed = false
+            // ── Stage 2: Z after G → enter gzActive, defer overview nav ───
+            if (gActive && (e.key === "z" || e.key === "Z")) {
+                e.preventDefault()
+                gActive = false
                 if (gTimer) { clearTimeout(gTimer); gTimer = null }
 
-                const dest: string | undefined = {
-                    r: HOTKEYS.overview.path,
-                    R: HOTKEYS.overview.path,
-                    "1": HOTKEYS.payments.path,
-                    "2": HOTKEYS.settlements.path,
-                    "3": HOTKEYS.analytics.path,
-                    "4": HOTKEYS.config.path,
+                gzActive = true
+                // After 600 ms with no digit, treat G Z as "go to overview"
+                gzTimer = setTimeout(() => {
+                    gzActive = false
+                    window.location.href = HOTKEYS.overview.path
+                }, 600)
+                return
+            }
+
+            // ── Stage 3: digit after G Z → go to child page ───────────────
+            if (gzActive) {
+                const child: string | undefined = {
+                    a: HOTKEYS.analytics.path,   A: HOTKEYS.analytics.path,
+                    c: HOTKEYS.config.path,      C: HOTKEYS.config.path,
+                    p: HOTKEYS.payments.path,    P: HOTKEYS.payments.path,
+                    s: HOTKEYS.settlements.path, S: HOTKEYS.settlements.path,
                 }[e.key]
 
-                if (dest) {
+                if (child) {
                     e.preventDefault()
-                    window.location.href = dest
+                    navigate(child)
+                    return
                 }
+
+                // Any other key while gzActive: abort the sequence
+                clearAll()
             }
+
+            // Unrecognised key while gActive: reset
+            if (gActive) clearAll()
         }
 
         document.addEventListener("keydown", handler)
-        return () => document.removeEventListener("keydown", handler)
+        return () => {
+            document.removeEventListener("keydown", handler)
+            clearAll()
+        }
     }, [])
 }
 

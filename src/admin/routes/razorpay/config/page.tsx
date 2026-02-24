@@ -233,6 +233,7 @@ const ConfigPage = () => {
 
 export const config = defineRouteConfig({
     label: "Config",
+    rank: 1,
 })
 
 export const handle = {

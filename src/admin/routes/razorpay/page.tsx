@@ -46,6 +46,20 @@ const RazorpayOverviewPage = () => {
 
     const childPages = [
         {
+            label: "Analytics",
+            href:  HOTKEYS.analytics.path,
+            hotkey: HOTKEYS.analytics.keys,
+            desc:  "Success rates, failure alerts, method breakdown and fee analysis",
+            badge: null,
+        },
+        {
+            label: "Config",
+            href:  HOTKEYS.config.path,
+            hotkey: HOTKEYS.config.keys,
+            desc:  "Gateway mode, API connectivity, webhook health and payment methods",
+            badge: null,
+        },
+        {
             label: "Payments",
             href:  HOTKEYS.payments.path,
             hotkey: HOTKEYS.payments.keys,
@@ -59,20 +73,6 @@ const RazorpayOverviewPage = () => {
             href:  HOTKEYS.settlements.path,
             hotkey: HOTKEYS.settlements.keys,
             desc:  "Track Razorpay settlement batches and UTR references",
-            badge: null,
-        },
-        {
-            label: "Analytics",
-            href:  HOTKEYS.analytics.path,
-            hotkey: HOTKEYS.analytics.keys,
-            desc:  "Success rates, failure alerts, method breakdown and fee analysis",
-            badge: null,
-        },
-        {
-            label: "Config",
-            href:  HOTKEYS.config.path,
-            hotkey: HOTKEYS.config.keys,
-            desc:  "Gateway mode, API connectivity, webhook health and payment methods",
             badge: null,
         },
     ]

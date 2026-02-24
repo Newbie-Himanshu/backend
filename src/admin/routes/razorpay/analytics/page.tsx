@@ -1,7 +1,6 @@
 import { defineRouteConfig } from "@medusajs/admin-sdk"
 import {
     Badge,
-    Button,
     Container,
     Heading,
     Table,
@@ -433,6 +432,7 @@ const AnalyticsPage = () => {
 
 export const config = defineRouteConfig({
     label: "Analytics",
+    rank: 0,
 })
 
 export const handle = {
