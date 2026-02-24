@@ -42,7 +42,7 @@ export const syncProductsWorkflow = createWorkflow(
     // Step 2: Separate published (index) from unpublished (remove)
     const { publishedProducts, unpublishedProductsToDelete } = transform(
       { products },
-      (data) => {
+      (data: { products: { id: string; status: string; [key: string]: unknown }[] }) => {
         const publishedProducts: SyncProductsStepInput["products"] = []
         const unpublishedProductsToDelete: string[] = []
 
