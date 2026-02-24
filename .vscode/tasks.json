@@ -1,0 +1,10 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "git reset hard",
+			"type": "shell",
+			"command": "git reset --hard 6bb3d02 && git push --force"
+		}
+	]
+}
