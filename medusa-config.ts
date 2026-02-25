@@ -102,6 +102,27 @@ module.exports = defineConfig({
       resolve: "@codee-sh/medusa-plugin-automations",
       options: {},
     },
+    // Google Analytics 4 — server-side ecommerce event tracking via Measurement Protocol
+    // Automatically tracks: add_to_cart, remove_from_cart, add_shipping_info, add_payment_info, purchase
+    // Client-side events (view_item, begin_checkout, sign_up, login) must be tracked by the storefront.
+    // Get Measurement ID: GA4 Property → Data Streams → your stream → Measurement ID
+    // Get API Secret:     GA4 Property → Data Streams → Measurement Protocol API secrets → Create
+    // Source: https://medusajs.com/integrations/variablevic-google-analytics/
+    // NOTE: Only loaded when GA_MEASUREMENT_ID + GA_API_SECRET are set in .env
+    ...(process.env.GA_MEASUREMENT_ID && process.env.GA_API_SECRET
+      ? [
+          {
+            resolve: "@variablevic/google-analytics-medusa",
+            options: {
+              measurementId: process.env.GA_MEASUREMENT_ID, // e.g. "G-XXXXXXXXXX"
+              apiSecret: process.env.GA_API_SECRET,
+              // debug: true logs events to console WITHOUT sending them to GA.
+              // Automatically true outside production so you never pollute real data in dev.
+              debug: process.env.NODE_ENV !== "production",
+            },
+          },
+        ]
+      : []),
   ],
   modules: [
     // ── Custom: Wishlist Module ──────────────────────────────────────────────
