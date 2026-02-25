@@ -27,6 +27,9 @@ import {
     GetPaymentStatusOutput,
 } from "@medusajs/types"
 
+/** Shared constant — imported by POST /store/cod/verify-otp so both layers lockout at the same threshold */
+export const MAX_OTP_ATTEMPTS = 5
+
 export type CodOptions = {
     min_order_amount?: number    // in paise, default ₹100
     max_order_amount?: number    // in paise, default ₹50,000
@@ -206,7 +209,7 @@ class CodPaymentService extends AbstractPaymentProvider<CodOptions> {
 
         // Defense-in-depth: also block here if the route somehow didn't catch it
         const attempts = Number(sessionData.otp_attempts ?? 0)
-        if (attempts >= 5) {
+        if (attempts >= MAX_OTP_ATTEMPTS) {
             throw new MedusaError(
                 MedusaError.Types.NOT_ALLOWED,
                 "Too many failed OTP attempts. Please restart checkout to receive a new code."

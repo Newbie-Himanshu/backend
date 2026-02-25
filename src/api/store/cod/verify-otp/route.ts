@@ -1,6 +1,6 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { Modules, ContainerRegistrationKeys } from "@medusajs/framework/utils"
-import CodPaymentService from "../../../../modules/cod-payment/service"
+import CodPaymentService, { MAX_OTP_ATTEMPTS } from "../../../../modules/cod-payment/service"
 import logger from "../../../../lib/logger"
 
 const log = logger.child({ module: "cod-verify-otp" })
@@ -32,7 +32,6 @@ const log = logger.child({ module: "cod-verify-otp" })
  *   The customer must restart checkout to get a new OTP session.
  *   A 6-digit OTP has 900,000 combinations; 5 attempts = 0.00056% brute-force success.
  */
-const MAX_OTP_ATTEMPTS = 5
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
     const { payment_session_id, otp } = req.body as {
@@ -52,9 +51,12 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
         return res.status(400).json({ error: "Invalid payment_session_id" })
     }
 
-    // Reject suspiciously long inputs early — valid OTPs are 6 digits
-    if (typeof otp !== "string" || !/^\d{4,8}$/.test(otp.trim())) {
-        return res.status(400).json({ error: "OTP must be a 4–8 digit number" })
+    // Reject non-6-digit inputs early — OTPs are always generated as exactly 6 digits.
+    // Accepting 4-8 digit inputs would let a customer supply a valid-looking but
+    // always-wrong OTP, wasting an attempt with a confusing "Invalid OTP" message
+    // instead of the correct "OTP must be a 6-digit number" feedback.
+    if (typeof otp !== "string" || !/^\d{6}$/.test(otp.trim())) {
+        return res.status(400).json({ error: "OTP must be a 6-digit number" })
     }
 
     try {
