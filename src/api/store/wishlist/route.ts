@@ -35,6 +35,11 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     metadata?: Record<string, unknown>
   }
 
+  // Basic input validation — product_id must be a non-empty string of reasonable length.
+  if (!product_id || typeof product_id !== "string" || product_id.trim().length === 0 || product_id.length > 255) {
+    return res.status(400).json({ error: "product_id must be a non-empty string (max 255 chars)." })
+  }
+
   const { result } = await addToWishlistWorkflow(req.scope).run({
     input: { customer_id, product_id, variant_id, metadata },
   })

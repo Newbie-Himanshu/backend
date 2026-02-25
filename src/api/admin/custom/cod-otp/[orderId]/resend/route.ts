@@ -2,6 +2,7 @@ import crypto from "crypto"
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { Modules } from "@medusajs/framework/utils"
 import CodPaymentService from "../../../../../../modules/cod-payment/service"
+import { getRedisClient } from "../../../../../../lib/redis-client"
 
 /**
  * POST /admin/custom/cod-otp/:orderId/resend
@@ -18,6 +19,23 @@ import CodPaymentService from "../../../../../../modules/cod-payment/service"
  */
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
     const { orderId } = req.params as { orderId: string }
+
+    // ── 0. Rate limit: max 1 resend per 60 seconds per order ─────────────
+    // Protects against a compromised admin account or a UI bug causing an
+    // SMS loop that spams the customer via MSG91.
+    // Uses SET NX EX (atomic) — no TTL race condition.
+    try {
+        const redis = getRedisClient()
+        const rlKey = `rl:otp:resend:${orderId}`
+        const acquired = await redis.set(rlKey, "1", "EX", 60, "NX") as string | null
+        if (acquired === null) {
+            return res.status(429).json({
+                error: "OTP was already resent for this order in the last 60 seconds. Please wait before trying again.",
+            })
+        }
+    } catch {
+        // Redis unavailable — allow through (rate limit is best-effort for admin routes)
+    }
 
     try {
         const orderModule   = req.scope.resolve(Modules.ORDER) as any

@@ -6,6 +6,53 @@ import { getRedisClient } from "../lib/redis-client"
 
 const log = logger.child({ module: "middlewares" })
 
+// ── Trusted-proxy IP resolution ───────────────────────────────────────────────
+// Read once at module init — never on hot path.
+//
+// Two modes:
+//
+// 1. TRUST_PROXY=true  (PaaS / Railway / Render / DigitalOcean App Platform)
+//    The app runs behind the platform's edge proxy. ALL inbound traffic already
+//    passed through the proxy, so X-Forwarded-For is always set by the platform
+//    and cannot be injected by end-users. Set this when deploying on a PaaS.
+//
+// 2. TRUSTED_PROXY_IPS=127.0.0.1  (self-hosted VPS with Nginx on same machine)
+//    Only trust X-Forwarded-For when the connecting socket IP matches one of the
+//    listed IPs (comma-separated).  Use this when running your own Nginx.
+//
+// Neither set → raw socket IP (safe for local dev; rate-limits by socket address).
+const TRUST_PROXY_ALL = process.env.TRUST_PROXY === "true"
+const TRUSTED_PROXY_IPS = (process.env.TRUSTED_PROXY_IPS ?? "")
+  .split(",")
+  .map((s) => s.trim())
+  .filter(Boolean)
+
+/**
+ * Returns the real client IP, safe against X-Forwarded-For spoofing.
+ */
+function getClientIp(req: MedusaRequest): string {
+  const socketIp = req.socket?.remoteAddress ?? "unknown"
+  const forwardedFor = (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim()
+
+  if (TRUST_PROXY_ALL && forwardedFor) return forwardedFor
+  if (TRUSTED_PROXY_IPS.length > 0 && TRUSTED_PROXY_IPS.includes(socketIp) && forwardedFor) {
+    return forwardedFor
+  }
+  return socketIp
+}
+
+// ── Atomic Redis INCR + EXPIRE (Lua script) ───────────────────────────────────
+// Two-command INCR then EXPIRE has a race: if the process crashes between them
+// the key has no TTL and the IP is permanently blocked.  This Lua script
+// executes both commands atomically inside a single Redis call.
+const INCR_WITH_TTL_LUA = `
+local count = redis.call('INCR', KEYS[1])
+if count == 1 then
+  redis.call('EXPIRE', KEYS[1], ARGV[1])
+end
+return count
+`
+
 // ── Cart completion idempotency lock (BUG-003 fix) ────────────────────────────
 // Prevents duplicate order creation from double-click or network retries.
 // Uses Redis SET NX EX to acquire a per-cart lock. If the lock is held,
@@ -38,10 +85,13 @@ async function cartCompletionLock(
       return
     }
 
-    // Release lock when response finishes (success or error)
-    res.on("finish", () => {
-      redis.del(lockKey).catch(() => { /* best-effort cleanup */ })
-    })
+    // Release lock when response finishes OR when the client aborts.
+    // "finish" fires when the server side sends the last byte.
+    // "close"  fires when the underlying socket is closed (client abort, disconnect).
+    // Without "close" the lock is held for the full 30s TTL on aborted requests.
+    const releaseLock = () => { redis.del(lockKey).catch(() => { /* best-effort */ }) }
+    res.on("finish", releaseLock)
+    res.on("close", releaseLock)
   } catch (redisErr) {
     // Redis unavailable — allow through (availability > duplicate prevention on outage)
     log.warn({ err: redisErr }, "Cart completion lock unavailable — allowing request through")
@@ -49,17 +99,34 @@ async function cartCompletionLock(
 
   return next()
 }
-// Rejects requests whose Content-Length header exceeds 1 MB.
-// This is a defense-in-depth measure — production should also apply limits
-// at the Nginx/ALB layer (client_max_body_size 1m in nginx.conf).
-const BODY_LIMIT_BYTES = 1 * 1024 * 1024  // 1 MB global limit
-const WEBHOOK_BODY_LIMIT_BYTES = 512 * 1024  // 512 KB for webhook endpoints
+// Rejects requests whose body would exceed the given size limit.
+// Defense-in-depth: Nginx / ALB must ALSO enforce client_max_body_size.
+//
+// Two attack vectors addressed:
+//  1. Content-Length spoofing  — checked synchronously before the body is read.
+//  2. Chunked-transfer bypass  — HTTP/1.1 chunked encoding does not set Content-Length.
+//     Clients that don't declare a size are rejected (411 Length Required).
+//     All legitimate API clients and SDKs always include Content-Length.
+const BODY_LIMIT_BYTES = 1 * 1024 * 1024          // 1 MB global limit
+const WEBHOOK_BODY_LIMIT_BYTES = 512 * 1024        // 512 KB for webhook endpoints
 
 function bodySizeGuard(limitBytes: number) {
   return function (req: MedusaRequest, res: MedusaResponse, next: MedusaNextFunction) {
-    const contentLength = parseInt(req.headers["content-length"] ?? "0", 10)
+    const cl = req.headers["content-length"]
+    const te = (req.headers["transfer-encoding"] ?? "").toLowerCase()
+
+    // Reject chunked requests that omit Content-Length entirely.
+    // Chunked encoding lets a sender stream an unknown-length body, bypassing the
+    // Content-Length check below.  Reject these at the header stage.
+    if (te.includes("chunked") && !cl) {
+      log.warn({ ip: getClientIp(req), path: req.path }, "Chunked request without Content-Length — rejected (411)")
+      res.status(411).json({ message: "Content-Length required." })
+      return
+    }
+
+    const contentLength = parseInt(cl ?? "0", 10)
     if (!isNaN(contentLength) && contentLength > limitBytes) {
-      log.warn({ ip: req.ip, path: req.path, contentLength }, "Request body too large — rejected")
+      log.warn({ ip: getClientIp(req), path: req.path, contentLength }, "Request body too large — rejected (413)")
       res.status(413).json({ message: "Request entity too large." })
       return
     }
@@ -68,8 +135,8 @@ function bodySizeGuard(limitBytes: number) {
 }
 // Protects /auth/customer/emailpass (login) and reset-password from
 // credential stuffing and password-reset spam.
-// Primary store: Redis. Fallback: in-memory Map (single-process protection).
-// Limit: 10 requests per 15 minutes per IP.
+// Primary store: Redis (atomic Lua INCR+TTL). Fallback: in-memory Map.
+// Limit: 10 requests per 15 minutes per REAL client IP.
 const AUTH_RATE_LIMIT_MAX = 10
 const AUTH_RATE_LIMIT_WINDOW_SECS = 15 * 60  // 15 minutes
 const inMemoryAuthRateLimit = new Map<string, { count: number; resetAt: number }>()
@@ -79,20 +146,19 @@ async function authRateLimiter(
   res: MedusaResponse,
   next: MedusaNextFunction
 ): Promise<void> {
-  // Use X-Forwarded-For header if behind a proxy; fall back to socket IP
-  const ip =
-    (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() ||
-    req.socket?.remoteAddress ||
-    "unknown"
+  const ip = getClientIp(req)   // safe — only trusts X-Forwarded-For from TRUSTED_PROXY_IPS
   const rlKey = `rl:auth:${ip}`
 
   try {
     const redis = getRedisClient()
-    // INCR returns the new count; set TTL on first call (NX)
-    const count = await redis.incr(rlKey)
-    if (count === 1) {
-      await redis.expire(rlKey, AUTH_RATE_LIMIT_WINDOW_SECS)
-    }
+    // Atomic Lua script: INCR + set TTL in one round-trip.
+    // Prevents permanent key-lock if process crashes between INCR and EXPIRE.
+    const count = await redis.eval(
+      INCR_WITH_TTL_LUA,
+      1,
+      rlKey,
+      String(AUTH_RATE_LIMIT_WINDOW_SECS)
+    ) as number
     if (count > AUTH_RATE_LIMIT_MAX) {
       log.warn({ ip, count }, "Auth rate limit exceeded (Redis)")
       res.status(429).json({
@@ -113,6 +179,59 @@ async function authRateLimiter(
         log.warn({ ip, count: entry.count }, "Auth rate limit exceeded (in-memory fallback)")
         res.status(429).json({
           message: "Too many login attempts. Please try again in 15 minutes.",
+        })
+        return
+      }
+    }
+  }
+
+  return next()
+}
+
+// ── OTP verify IP rate limiter ─────────────────────────────────────────────────
+// POST /store/cod/verify-otp is protected per-session (5 attempts per session),
+// but an attacker can open many sessions and exhaust them in parallel across IPs.
+// This adds an IP-level ceiling: 10 OTP attempts per 5 minutes per client IP.
+// Uses the same atomic Lua pattern as authRateLimiter.
+const OTP_RATE_LIMIT_MAX = 10
+const OTP_RATE_LIMIT_WINDOW_SECS = 5 * 60  // 5 minutes
+const inMemoryOtpRateLimit = new Map<string, { count: number; resetAt: number }>()
+
+async function otpVerifyRateLimiter(
+  req: MedusaRequest,
+  res: MedusaResponse,
+  next: MedusaNextFunction
+): Promise<void> {
+  const ip = getClientIp(req)
+  const rlKey = `rl:otp-verify:${ip}`
+
+  try {
+    const redis = getRedisClient()
+    const count = await redis.eval(
+      INCR_WITH_TTL_LUA,
+      1,
+      rlKey,
+      String(OTP_RATE_LIMIT_WINDOW_SECS)
+    ) as number
+    if (count > OTP_RATE_LIMIT_MAX) {
+      log.warn({ ip, count }, "OTP verify rate limit exceeded (Redis)")
+      res.status(429).json({
+        message: "Too many OTP attempts from this IP. Please try again in 5 minutes.",
+      })
+      return
+    }
+  } catch (redisErr) {
+    log.warn({ err: redisErr }, "Redis OTP rate-limit unavailable — using in-memory fallback")
+    const now = Date.now()
+    const entry = inMemoryOtpRateLimit.get(ip)
+    if (!entry || now > entry.resetAt) {
+      inMemoryOtpRateLimit.set(ip, { count: 1, resetAt: now + OTP_RATE_LIMIT_WINDOW_SECS * 1000 })
+    } else {
+      entry.count++
+      if (entry.count > OTP_RATE_LIMIT_MAX) {
+        log.warn({ ip, count: entry.count }, "OTP verify rate limit exceeded (in-memory fallback)")
+        res.status(429).json({
+          message: "Too many OTP attempts from this IP. Please try again in 5 minutes.",
         })
         return
       }
@@ -263,10 +382,11 @@ export default defineMiddlewares({
 
     // ── COD OTP verification ─────────────────────────────────────────────────
     // Bind OTP verification to an authenticated customer session.
-    // The handler also validates by payment_session_id, providing defense-in-depth.
+    // otpVerifyRateLimiter adds an IP-level ceiling (10 / 5 min) on top of the
+    // per-session brute-force lockout enforced in the route handler.
     {
       matcher: "/store/cod/verify-otp*",
-      middlewares: [authenticate("customer", ["session", "bearer"])],
+      middlewares: [authenticate("customer", ["session", "bearer"]), otpVerifyRateLimiter],
     },
 
     // ── Order tracking ───────────────────────────────────────────────────────
