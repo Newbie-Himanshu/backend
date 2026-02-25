@@ -59,7 +59,14 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
             return res.status(200).json({ received: false, error: "Webhook not configured" })
         }
 
-        const receivedToken = (req.query as Record<string, string>).token ?? ""
+        const receivedToken = req.headers["x-shiprocket-token"] as string | undefined
+            ?? (() => {
+                // req.query values can be string | string[] | ParsedQs.
+                // A duplicate ?token=a&token=b delivers an array — convert to string
+                // so the length check below works correctly (an array would never match).
+                const raw = (req.query as Record<string, unknown>)["token"]
+                return Array.isArray(raw) ? raw[0] ?? "" : String(raw ?? "")
+            })()
         // Constant-time comparison to prevent timing-oracle on the token value
         const expectedBuf = Buffer.from(expectedToken)
         const receivedBuf = Buffer.from(receivedToken)
