@@ -30,11 +30,11 @@ export { sdk }
 //   G A F      → Funnel
 // Second key "A" is unused by Medusa core (G+O, G+P, G+C, G+T, G+M, G+S etc.)
 export const HOTKEYS = {
-  overview:    { keys: "G A",   path: "/app/ga4" },
-  performance: { keys: "G A P", path: "/app/ga4/performance" },
-  products:    { keys: "G A R", path: "/app/ga4/products" },
-  acquisition: { keys: "G A C", path: "/app/ga4/acquisition" },
-  funnel:      { keys: "G A F", path: "/app/ga4/funnel" },
+  overview:    { keys: "G A",   path: "/ga4" },
+  performance: { keys: "G A P", path: "/ga4/performance" },
+  products:    { keys: "G A R", path: "/ga4/products" },
+  acquisition: { keys: "G A C", path: "/ga4/acquisition" },
+  funnel:      { keys: "G A F", path: "/ga4/funnel" },
 } as const
 
 /**
