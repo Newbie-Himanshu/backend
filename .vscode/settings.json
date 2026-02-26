@@ -50,6 +50,16 @@
     "**/.medusa": true
   },
 
+  // ── Git Repo Discovery ───────────────────────────────────
+
+  // Explicitly register both child repos so Source Control + GitLens
+  // graph shows them independently (monorepo with separate remotes).
+  "git.scanRepositories": [
+    "vridhira-marketplace",
+    "vridhira-storefront"
+  ],
+  "git.repositoryScanMaxDepth": 2,
+
   // ── Git Security ──────────────────────────────────────────
 
   // Require confirmation before push
