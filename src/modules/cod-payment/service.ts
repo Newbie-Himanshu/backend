@@ -307,33 +307,28 @@ class CodPaymentService extends AbstractPaymentProvider<CodOptions> {
      * Initiate a COD payment session.
      *
      * For orders >= otp_threshold (default ₹3,000):
-     *   1. Generates a cryptographically random 6-digit OTP
-     *   2. Hashes it with a per-session salt (HMAC-SHA256) — never stored in plain text
-     *   3. Sends the OTP to the customer's phone via MSG91 SendOTP API
-     *   4. Stores hash + salt + expiry in session data
-     *   5. Sets `otp_required: true` — authorizePayment will block until OTP is verified
-     *
-     * The storefront must call POST /store/cod/verify-otp before completing checkout.
+     *   Sets otp_required: true, but does NOT generate/send OTP.
+     *   The storefront must call POST /store/cod/send-otp to trigger OTP generation and SMS.
      */
     async initiatePayment(input: InitiatePaymentInput): Promise<InitiatePaymentOutput> {
-        const { amount, currency_code, context } = input
+        const { amount, currency_code, context } = input;
 
         // ── COD Fraud Block Check ──────────────────────────────────────────
-        const customerId = (context as any)?.customer?.id as string | undefined
+        const customerId = (context as any)?.customer?.id as string | undefined;
         if (customerId) {
             try {
-                const customerModule = (this.container_ as any).resolve(Modules.CUSTOMER)
-                const customer = await customerModule.retrieveCustomer(customerId, { select: ["id", "metadata"] })
-                const meta = readCodMeta(customer?.metadata)
+                const customerModule = (this.container_ as any).resolve(Modules.CUSTOMER);
+                const customer = await customerModule.retrieveCustomer(customerId, { select: ["id", "metadata"] });
+                const meta = readCodMeta(customer?.metadata);
                 if (meta.cod_blocked) {
                     throw new MedusaError(
                         MedusaError.Types.NOT_ALLOWED,
                         codBlockedMessage(meta.cod_online_orders_needed)
-                    )
+                    );
                 }
             } catch (err) {
-                if (err instanceof MedusaError) throw err
-                log.warn({ err, customerId }, "COD block check failed — proceeding")
+                if (err instanceof MedusaError) throw err;
+                log.warn({ err, customerId }, "COD block check failed — proceeding");
             }
         }
 
@@ -342,16 +337,14 @@ class CodPaymentService extends AbstractPaymentProvider<CodOptions> {
             throw new MedusaError(
                 MedusaError.Types.INVALID_DATA,
                 "COD is only available for INR orders"
-            )
+            );
         }
 
-        this.validateOrderAmount(Number(amount))
+        this.validateOrderAmount(Number(amount));
 
-        // Use cryptographically random bytes — Math.random() is not secure enough
-        // for a session ID that is shared with the client and stored in the DB.
-        const sessionId   = `cod_${crypto.randomBytes(16).toString("hex")}`
-        const numericAmount = Number(amount)
-        const needsOtp    = numericAmount >= this.options_.otp_threshold
+        const sessionId   = `cod_${crypto.randomBytes(16).toString("hex")}`;
+        const numericAmount = Number(amount);
+        const needsOtp    = numericAmount >= this.options_.otp_threshold;
 
         const baseData: Record<string, unknown> = {
             status: "pending",
@@ -359,101 +352,97 @@ class CodPaymentService extends AbstractPaymentProvider<CodOptions> {
             currency: currency_code,
             created_at: new Date().toISOString(),
             payment_method: "cash_on_delivery",
-        }
+        };
 
         if (!needsOtp) {
-            return { id: sessionId, data: { ...baseData, otp_required: false } }
+            return { id: sessionId, data: { ...baseData, otp_required: false } };
         }
 
-        // ── OTP required path ──────────────────────────────────────────────
-        // Resolve phone number: prefer customer phone, fall back to billing address
+        // Phone number is still required for high-value COD orders
         const phone: string | undefined =
             (context as any)?.customer?.phone ||
             (context as any)?.billing_address?.phone ||
-            (context as any)?.shipping_address?.phone
+            (context as any)?.shipping_address?.phone;
 
         if (!phone) {
-            // A phone number is mandatory for high-value COD orders.
-            // Silently skipping OTP would allow fraudulent high-value COD orders
-            // from guest accounts with no phone. Fail hard instead.
             throw new MedusaError(
                 MedusaError.Types.INVALID_DATA,
                 `A phone number is required for COD orders above ₹${this.options_.otp_threshold / 100}. Please add a phone number to your account or address.`
-            )
+            );
         }
 
         // Validate and normalise to MSG91's expected format (91XXXXXXXXXX).
-        // Throws a clear, customer-facing MedusaError for landlines or non-Indian numbers.
-        const normalisedPhone = validateAndNormaliseIndianPhone(phone)
+        const normalisedPhone = validateAndNormaliseIndianPhone(phone);
 
-        const otp        = generateOtp()
-        const salt       = crypto.randomBytes(16).toString("hex")
-        const otpHash    = hashOtp(otp, salt)
-        const expiresAt  = Date.now() + this.options_.otp_expiry_minutes * 60 * 1000
-
-        // ── Redis OTP send rate limit ─────────────────────────────────────
-        // Prevents SMS bombing: at most 1 OTP SMS per phone number per 60 seconds.
-        // Primary: Redis SET NX EX. Fallback: in-memory Map (BUG-006 fix).
-        // Using two layers ensures that a Redis outage never bypasses the rate limit.
-        try {
-            const redis = getRedisClient()
-            const rlKey = `cod:otp:rl:${normalisedPhone}`
-            // ioredis v5 typings don't cover SET + NX + EX in one overload.
-            // Use call() (raw Redis command) for the atomic SET NX EX.
-            const set = await redis.call("SET", rlKey, "1", "NX", "EX", "60") as string | null
-            if (set === null) {
-                throw new MedusaError(
-                    MedusaError.Types.NOT_ALLOWED,
-                    "An OTP was recently sent to this number. Please wait 60 seconds before requesting a new code."
-                )
-            }
-        } catch (rlErr) {
-            if (rlErr instanceof MedusaError) throw rlErr
-            // Redis unavailable — fall back to in-memory rate limit (BUG-006 fix).
-            // This prevents SMS bombing even during a Redis outage.
-            log.warn({ err: rlErr }, "Redis OTP rate-limit unavailable — applying in-memory fallback rate limit")
-            const now = Date.now()
-            const expiry = inMemoryOtpRateLimit.get(normalisedPhone)
-            // Clean up expired entries to prevent unbounded memory growth
-            for (const [k, v] of inMemoryOtpRateLimit) {
-                if (now > v) inMemoryOtpRateLimit.delete(k)
-            }
-            if (expiry !== undefined && now < expiry) {
-                throw new MedusaError(
-                    MedusaError.Types.NOT_ALLOWED,
-                    "An OTP was recently sent to this number. Please wait 60 seconds before requesting a new code."
-                )
-            }
-            // Set the in-memory lock for 60 seconds
-            inMemoryOtpRateLimit.set(normalisedPhone, now + 60_000)
-        }
-
-        try {
-            await sendOtpViaMSG91(normalisedPhone, otp, this.options_)
-        } catch (err) {
-            // MSG91 failure must BLOCK checkout, not silently bypass OTP.
-            // A MSG91 outage or misconfiguration cannot become a fraud vector.
-            log.error({ err, sessionId }, "Failed to send OTP via MSG91")
-            throw new MedusaError(
-                MedusaError.Types.UNEXPECTED_STATE,
-                "Could not send the OTP to your phone number. Please try again in a moment or use a different payment method."
-            )
-        }
-
-        log.info({ sessionId, amount_inr: numericAmount / 100, expires: new Date(expiresAt).toISOString() }, "COD OTP initiated")
-
+        // No OTP generated/sent here. Session data only marks otp_required.
         return {
             id: sessionId,
             data: {
                 ...baseData,
                 otp_required: true,
                 otp_verified: false,
-                otp_hash:     otpHash,
-                otp_salt:     salt,
-                otp_expires_at: expiresAt,
+                otp_hash: null,
+                otp_salt: null,
+                otp_expires_at: null,
                 otp_phone_last4: normalisedPhone.slice(-4), // for UI display only
             },
+        };
+    }
+
+    /**
+     * Generates and sends OTP, stores hash/salt/expiry in session data.
+     * Called by POST /store/cod/send-otp route.
+     * @param sessionData Current payment session data
+     * @param phone Customer phone number (already validated)
+     * @returns Updated session data with OTP fields
+     */
+    async sendOtpAndStoreHash(sessionData: Record<string, unknown>, phone: string): Promise<Record<string, unknown>> {
+        const normalisedPhone = validateAndNormaliseIndianPhone(phone);
+        const otp = generateOtp();
+        const salt = crypto.randomBytes(16).toString("hex");
+        const otpHash = hashOtp(otp, salt);
+        const expiresAt = Date.now() + this.options_.otp_expiry_minutes * 60 * 1000;
+
+        // Rate limit: Redis primary, in-memory fallback
+        try {
+            const redis = getRedisClient();
+            const rlKey = `cod:otp:rl:${normalisedPhone}`;
+            const set = await redis.call("SET", rlKey, "1", "NX", "EX", "60") as string | null;
+            if (set === null) {
+                throw new MedusaError(
+                    MedusaError.Types.NOT_ALLOWED,
+                    "An OTP was recently sent to this number. Please wait 60 seconds before requesting a new code."
+                );
+            }
+        } catch (rlErr) {
+            if (rlErr instanceof MedusaError) throw rlErr;
+            log.warn({ err: rlErr }, "Redis OTP rate-limit unavailable — applying in-memory fallback rate limit");
+            const now = Date.now();
+            const expiry = inMemoryOtpRateLimit.get(normalisedPhone);
+            for (const [k, v] of inMemoryOtpRateLimit) {
+                if (now > v) inMemoryOtpRateLimit.delete(k);
+            }
+            if (expiry !== undefined && now < expiry) {
+                throw new MedusaError(
+                    MedusaError.Types.NOT_ALLOWED,
+                    "An OTP was recently sent to this number. Please wait 60 seconds before requesting a new code."
+                );
+            }
+            inMemoryOtpRateLimit.set(normalisedPhone, now + 60_000);
         }
+
+        await sendOtpViaMSG91(normalisedPhone, otp, this.options_);
+        log.info({ phone_last4: normalisedPhone.slice(-4), expires: new Date(expiresAt).toISOString() }, "COD OTP sent via sendOtpAndStoreHash");
+
+        return {
+            ...sessionData,
+            otp_required: true,
+            otp_verified: false,
+            otp_hash: otpHash,
+            otp_salt: salt,
+            otp_expires_at: expiresAt,
+            otp_phone_last4: normalisedPhone.slice(-4),
+        };
     }
 
     /**
