@@ -1,0 +1,5 @@
+# These are independent git repos — tracked separately
+# vridhira-marketplace → https://github.com/Newbie-Himanshu/vridhira-backend
+# vridhira-storefront  → https://github.com/Newbie-Himanshu/vridhira-frontend
+vridhira-marketplace/
+vridhira-storefront/
