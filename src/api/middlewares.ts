@@ -152,6 +152,10 @@ setInterval(() => {
   for (const [ip, data] of inMemoryOtpRateLimit) {
     if (now > data.resetAt) inMemoryOtpRateLimit.delete(ip)
   }
+  // Clean FAQ Map
+  for (const [ip, data] of inMemoryFaqRateLimit) {
+    if (now > data.resetAt) inMemoryFaqRateLimit.delete(ip)
+  }
 }, 60 * 60 * 1000) // 1 hour
 async function authRateLimiter(
   req: MedusaRequest,
@@ -244,6 +248,60 @@ async function otpVerifyRateLimiter(
         log.warn({ ip, count: entry.count }, "OTP verify rate limit exceeded (in-memory fallback)")
         res.status(429).json({
           message: "Too many OTP attempts from this IP. Please try again in 5 minutes.",
+        })
+        return
+      }
+    }
+  }
+
+  return next()
+}
+
+// ── FAQ query submission rate limiter ─────────────────────────────────────────
+// POST /store/faq-queries is a fully public endpoint (no auth).
+// Without a rate limit, any automated script could flood the admin inbox.
+// Limit: 5 submissions per hour per real client IP.
+// Uses the same atomic Redis Lua pattern as authRateLimiter.
+const FAQ_QUERY_RATE_LIMIT_MAX  = 5
+const FAQ_QUERY_RATE_LIMIT_WINDOW_SECS = 60 * 60  // 1 hour
+const inMemoryFaqRateLimit = new Map<string, { count: number; resetAt: number }>()
+
+async function faqQueryRateLimiter(
+  req: MedusaRequest,
+  res: MedusaResponse,
+  next: MedusaNextFunction
+): Promise<void> {
+  const ip    = getClientIp(req)
+  const rlKey = `rl:faq-query:${ip}`
+
+  try {
+    const redis = getRedisClient()
+    const count = await redis.eval(
+      INCR_WITH_TTL_LUA,
+      1,
+      rlKey,
+      String(FAQ_QUERY_RATE_LIMIT_WINDOW_SECS)
+    ) as number
+
+    if (count > FAQ_QUERY_RATE_LIMIT_MAX) {
+      log.warn({ ip, count }, "FAQ query rate limit exceeded (Redis)")
+      res.status(429).json({
+        message: "Too many questions submitted. Please try again in an hour.",
+      })
+      return
+    }
+  } catch (redisErr) {
+    log.warn({ err: redisErr }, "Redis FAQ rate-limit unavailable — using in-memory fallback")
+    const now   = Date.now()
+    const entry = inMemoryFaqRateLimit.get(ip)
+    if (!entry || now > entry.resetAt) {
+      inMemoryFaqRateLimit.set(ip, { count: 1, resetAt: now + FAQ_QUERY_RATE_LIMIT_WINDOW_SECS * 1000 })
+    } else {
+      entry.count++
+      if (entry.count > FAQ_QUERY_RATE_LIMIT_MAX) {
+        log.warn({ ip, count: entry.count }, "FAQ query rate limit exceeded (in-memory fallback)")
+        res.status(429).json({
+          message: "Too many questions submitted. Please try again in an hour.",
         })
         return
       }
@@ -481,6 +539,14 @@ export default defineMiddlewares({
       middlewares: [authenticate("customer", ["session", "bearer"])],
     },
 
+    // ── FAQ query submission rate limiter ────────────────────────────────────
+    // Public endpoint — 5 submissions per hour per IP.
+    {
+      matcher: "/store/faq-queries",
+      method: ["POST"],
+      middlewares: [faqQueryRateLimiter],
+    },
+
     // ── Wishlist ─────────────────────────────────────────────────────────────
     // All wishlist operations (list, add, remove) require a logged-in customer.
     // The customer_id is derived from auth_context in each handler — never
@@ -502,6 +568,15 @@ export default defineMiddlewares({
         authenticate("customer", ["session", "bearer"]),
         requireVerifiedPurchase,
       ],
+    },
+
+    // ── FAQ query submission rate limiter ────────────────────────────────────
+    // POST /store/faq-queries is a public endpoint (no auth required).
+    // Limit: 5 submissions per hour per real client IP.
+    {
+      matcher: "/store/faq-queries",
+      method:  ["POST"],
+      middlewares: [faqQueryRateLimiter],
     },
 
     // ── Review eligibility + pending review checks ────────────────────────────

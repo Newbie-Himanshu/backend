@@ -136,6 +136,13 @@ module.exports = defineConfig({
       : []),
   ],
   modules: [
+    // ── Custom: FAQ Queries Module ───────────────────────────────────────────
+    // Stores customer-submitted support questions.
+    // Customers POST to /store/faq-queries (public, rate-limited).
+    // Admins read and answer queries from Admin → FAQ Queries (custom route).
+    {
+      resolve: "./src/modules/faq-queries",
+    },
     // ── Custom: Wishlist Module ──────────────────────────────────────────────
     // WishlistItem entity linked to Customer & Product via src/links/
     {
