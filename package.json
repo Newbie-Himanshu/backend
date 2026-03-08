@@ -55,6 +55,7 @@
     "meilisearch": "^0.55.0",
     "pino": "^10.3.1",
     "razorpay": "^2.9.6",
+    "redis": "^5.11.0",
     "resend": "6.9.2"
   },
   "devDependencies": {
