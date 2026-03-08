@@ -298,5 +298,35 @@ module.exports = defineConfig({
         ],
       },
     },
+    // ── File Module — Digital Ocean Spaces (S3-compatible) ─────────────────────
+    // Stores all application files in Digital Ocean Spaces
+    // Product images, variant images, documents, etc. are uploaded to DO Spaces.
+    // Requires: DO_SPACES_ACCESS_KEY_ID, DO_SPACES_SECRET_ACCESS_KEY,
+    //           DO_SPACES_SPACE_NAME, DO_SPACES_REGION, DO_SPACES_ENDPOINT
+    // Get credentials from: https://cloud.digitalocean.com/spaces
+    {
+      resolve: "@medusajs/medusa/file",
+      options: {
+        providers: [
+          {
+            resolve: "@medusajs/medusa/file-s3",
+            id: "s3",
+            options: {
+              // Digital Ocean Spaces credentials
+              access_key_id: process.env.DO_SPACES_ACCESS_KEY_ID,
+              secret_access_key: process.env.DO_SPACES_SECRET_ACCESS_KEY,
+              region: process.env.DO_SPACES_REGION,
+              bucket: process.env.DO_SPACES_SPACE_NAME,
+              // Digital Ocean Spaces S3-compatible endpoint
+              endpoint: process.env.DO_SPACES_ENDPOINT,
+              // Ensures file URLs use the custom endpoint instead of S3 defaults
+              forcePathStyle: true,
+              // ACL for uploaded files (public-read allows direct access via URL)
+              acl: "public-read",
+            },
+          },
+        ],
+      },
+    },
   ],
 })
