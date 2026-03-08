@@ -1,6 +1,9 @@
 import crypto from "crypto"
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { Modules, ContainerRegistrationKeys } from "@medusajs/framework/utils"
+import logger from "../../../../lib/logger"
+
+const log = logger.child({ module: "verify-email" })
 
 /**
  * GET /store/auth/verify-email?token=xxx
@@ -22,7 +25,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 
     const secret = process.env.JWT_SECRET
     if (!secret) {
-        console.error("[EmailVerification] JWT_SECRET environment variable is not set — cannot verify token")
+        log.error("JWT_SECRET environment variable is not set — cannot verify token")
         return res.status(500).json({ verified: false, error: "Server configuration error" })
     }
 
@@ -85,8 +88,9 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
             return res.status(400).json({ verified: false, error: "Account not found" })
         }
         if (customer.email.toLowerCase() !== email.toLowerCase()) {
-            console.warn(
-                `[EmailVerification] Token email "${email}" no longer matches current account email — token invalid`
+            log.warn(
+                { tokenEmail: email, currentEmail: customer.email },
+                "Token email no longer matches current account email — token invalid"
             )
             return res.status(400).json({
                 verified: false,
@@ -94,7 +98,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
             })
         }
     } catch (queryErr) {
-        console.error("[EmailVerification] Failed to re-validate customer email:", (queryErr as Error).message)
+        log.error({ err: queryErr }, "Failed to re-validate customer email:", (queryErr as Error).message)
         return res.status(500).json({ verified: false, error: "Verification failed" })
     }
 
@@ -105,11 +109,11 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
             metadata: { email_verified: true, email_verified_at: new Date().toISOString() },
         })
 
-        console.log(`[EmailVerification] Customer ${customerId} (${email}) verified`)
+        log.info({ customerId, email }, "Customer ${customerId} (${email}) verified`)
         return res.status(200).json({ verified: true, email })
 
     } catch (err) {
-        console.error("[EmailVerification] Failed to update customer metadata:", (err as Error).message)
+        log.error({ err }, "Failed to update customer metadata:", (err as Error).message)
         return res.status(500).json({ verified: false, error: "Failed to verify email" })
     }
 }

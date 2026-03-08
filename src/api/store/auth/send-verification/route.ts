@@ -1,6 +1,9 @@
 import crypto from "crypto"
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { Modules, ContainerRegistrationKeys } from "@medusajs/framework/utils"
+import logger from "../../../../lib/logger"
+
+const log = logger.child({ module: "send-verification" })
 
 // Token expires in 24 hours
 const EXPIRY_HOURS = 24
@@ -51,7 +54,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
         // Email in the request must exactly match the customer's actual email
         if (customer.email.toLowerCase() !== email.toLowerCase()) {
-            console.warn(`[EmailVerification] customer_id/email mismatch — possible account takeover attempt | customer_id: ${customer_id}`)
+            log.warn({ customerId: customer_id }, "Customer ID/email mismatch — possible account takeover attempt")
             return res.status(400).json({ error: "Invalid request" })
         }
 
@@ -78,13 +81,13 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
         const secret = process.env.JWT_SECRET
         if (!secret) {
-            console.error("[EmailVerification] JWT_SECRET environment variable is not set — cannot sign verification token")
+            log.error("JWT_SECRET environment variable is not set — cannot sign verification token")
             return res.status(500).json({ error: "Server configuration error" })
         }
 
         const storeUrl = process.env.STORE_URL
         if (!storeUrl) {
-            console.error("[EmailVerification] STORE_URL environment variable is not set — cannot build verification link")
+            log.error("STORE_URL environment variable is not set — cannot build verification link")
             return res.status(500).json({ error: "Server configuration error" })
         }
 
@@ -112,7 +115,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
             },
         })
 
-        console.log(`[EmailVerification] Verification email sent to ${verifiedEmail}`)
+        log.info({ email: verifiedEmail }, "Verification email sent")
 
         // Record send timestamp so the cooldown check above can gate the next request
         try {
@@ -127,7 +130,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
         return res.status(200).json({ sent: true })
 
     } catch (err) {
-        console.error("[EmailVerification] Failed to send verification email:", (err as Error).message)
+        log.error({ err }, "Failed to send verification email")
         return res.status(500).json({ error: "Failed to send verification email" })
     }
 }
