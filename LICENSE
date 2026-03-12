@@ -284,3 +284,92 @@ QUESTIONS OR LICENSE INQUIRY:
 
 By deploying E-Commerce Backend in a commercial context without a valid
 license, you agree to the damages and enforcement terms outlined above.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ACKNOWLEDGMENT OF DEPENDENCIES
+
+This Backend Software uses the following open-source projects and frameworks,
+each with its own separate license:
+
+**Commerce Engine:**
+  • MedusaJS (https://github.com/medusajs/medusa) — MIT License
+    E-commerce platform framework and API foundation
+
+**Runtime & Language:**
+  • Node.js (https://github.com/nodejs/node) — MIT License
+    JavaScript runtime environment
+
+  • TypeScript (https://github.com/microsoft/TypeScript) — Apache 2.0 License
+    Typed superset of JavaScript
+
+**Database & ORM:**
+  • PostgreSQL (https://www.postgresql.org) — PostgreSQL License
+    Open-source relational database
+
+  • TypeORM (https://github.com/typeorm/typeorm) — MIT License
+    ORM for TypeScript and JavaScript
+
+**API & Web Framework:**
+  • Express.js (https://github.com/expressjs/express) — MIT License
+    Web application framework (if used)
+
+  • NestJS (https://github.com/nestjs/nest) — MIT License
+    Progressive Node.js framework (if used)
+
+**Payment Processing:**
+  • Stripe SDK / Razorpay SDK — Respective proprietary licenses
+    Payment gateway integrations
+
+**Authentication & Security:**
+  • Passport.js (https://github.com/jaredhanson/passport) — MIT License
+    Authentication middleware (if used)
+
+  • JWT (JSON Web Tokens) — Open standard
+    Secure token-based authentication
+
+**File Storage:**
+  • DigitalOcean Spaces SDK — MIT License
+    Cloud object storage integration
+
+  • AWS SDK / Cloud SDKs — Various open-source licenses
+    Cloud service integrations
+
+**Logging & Monitoring:**
+  • Winston / Pino — MIT License
+    Logging libraries
+
+  • Sentry (https://sentry.io) — Proprietary with open-source components
+    Error tracking and performance monitoring
+
+**Other Dependencies:**
+  All other npm packages and their dependencies listed in package.json
+  and yarn.lock (or package-lock.json)
+
+This Software acknowledges these and other open-source projects that make
+this backend possible. You MUST comply with all dependency licenses
+independently in addition to this License.
+
+For a complete list of dependencies, versions, and their licenses, see:
+  • package.json — Direct dependencies
+  • yarn.lock or package-lock.json — All resolved dependencies
+  • npm ls --depth=0 — List installed packages
+
+Third-Party License Compliance:
+  You are responsible for ensuring compliance with all dependent project
+  licenses when deploying and using this Software. This includes but is
+  not limited to:
+    • Including license notices for all dependencies
+    • Complying with copyleft obligations (if any)
+    • Respecting trademark usage restrictions
+    • Following version-specific license terms
+
+This License applies ONLY to Himanshu's original Backend code. Dependency
+licenses remain under their own respective terms and are NOT altered by
+this License. In case of conflict between this License and any dependency
+license, the more restrictive terms apply.
+
+For questions about dependency licenses:
+  • Check each project's LICENSE file
+  • Visit the project's GitHub repository
+  • Contact the respective project maintainers
