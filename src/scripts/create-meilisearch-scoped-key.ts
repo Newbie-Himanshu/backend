@@ -1,7 +1,7 @@
 /**
  * src/scripts/create-meilisearch-scoped-key.ts
  *
- * One-time setup: creates a scoped Meilisearch API key for the Himanshu backend.
+ * One-time setup: creates a scoped Meilisearch API key for the E-Commerce Backend.
  * Fixes BUG-001 — replaces the master key with a principle-of-least-privilege key.
  *
  * USAGE
@@ -69,8 +69,8 @@ async function main() {
 
   // Create the scoped key
   const key = await client.createKey({
-    name:        "himanshu-backend-scoped",
-    description: "Scoped server key for Himanshu backend: index + search products only",
+    name:        "backend-scoped",
+    description: "Scoped server key for E-Commerce Backend: index + search products only",
     actions: [
       "documents.add",
       "documents.get",
