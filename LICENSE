@@ -1,4 +1,4 @@
-Attribution License
+E-Commerce Marketplace (Backend) Attribution License
 Version 2.0 — March 2026
 
 Copyright (c) 2026 Himanshu (https://github.com/Newbie-Himanshu)
@@ -6,163 +6,348 @@ All rights reserved.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
+PREAMBLE
+
+This License governs the use of an e-commerce marketplace backend system
+(hereinafter "Backend Software" or "Software"). The Backend Software includes
+but is not limited to: REST/GraphQL APIs, server-side business logic, database
+schema and migrations, authentication/authorization systems, payment processing,
+inventory management, vendor management, order processing pipelines, admin
+dashboards, and all server-side infrastructure code.
+
+The Licensor retains all intellectual property rights in the Software. This
+License imposes mandatory attribution requirements for API documentation,
+source code, environment configurations, and deployment artifacts. These
+conditions are binding, non-waivable, and apply whether the Software is
+deployed internally, to staging, or to production.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
 GRANT OF LICENSE
 
 Subject to full and continuous compliance with ALL conditions set out in this
 License, the Licensor (Himanshu) hereby grants you a worldwide,
-royalty-free, non-exclusive license to:
+royalty-free, non-exclusive, non-transferable license to:
 
-  (a) use, copy, and run this software for personal or commercial purposes;
-  (b) modify this software and create derivative works;
-  (c) distribute copies of this software or derivative works.
+  (a) use, copy, and run this Backend Software for personal or commercial
+      marketplace deployments on servers or cloud platforms;
+  (b) modify this Backend Software and create derivative works;
+  (c) distribute copies of this Backend Software or derivative works
+      in source code form to other developers;
+  (d) integrate with complementary systems and APIs.
 
-This grant is conditional. Any violation of the conditions below immediately
-and automatically terminates all rights granted under this License without
-notice.
+RESTRICTIONS:
+  • You may NOT sublicense or transfer this license to third parties
+    without express written permission
+  • You may NOT use this Backend Software to build competing marketplace
+    platforms without authorization
+  • You may NOT reverse-engineer, decompile, or obfuscate the Software
+    to hide its origin
+  • You may NOT deploy the Software across multiple independent companies
+    without separate licenses for each
+  • Distribution in binary/compiled form requires source attribution in
+    documentation, error logs, and API responses
+
+This grant is conditional. Any violation immediately and automatically
+terminates all rights granted without notice for repeated violations.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 MANDATORY ATTRIBUTION CONDITIONS
 
-The following attribution conditions are NON-NEGOTIABLE and must be satisfied
-at all times. Failure to comply constitutes copyright infringement and a
-material breach of this License.
+The following attribution conditions are NON-NEGOTIABLE and binding.
+Violations constitute copyright infringement and immediate license termination.
+These conditions apply regardless of:
+  • Deployment environment (development, staging, production)
+  • Hosting model (self-hosted, cloud, serverless, containerized)
+  • Whether code is modified or unmodified
+  • Whether the marketplace is public, private, or internal
+  • Whether the marketplace is free or commercial
 
 ───────────────────────────────────────────────────────────────────────────
-CONDITION 1 — PROJECT DOCUMENTATION ATTRIBUTION
+CONDITION 1 — API DOCUMENTATION ATTRIBUTION
 ───────────────────────────────────────────────────────────────────────────
 
-If you use, distribute, publish, host, or deploy this software or any
-portion of it — whether the project is public or private, commercial or
-non-commercial — your project's primary documentation file (README, landing page, or equivalent) MUST
-contain a clearly visible attribution section that includes ALL of the
-following fields exactly as written:
+YOUR API DOCUMENTATION MUST include an "Attribution" or "Credits" section
+that includes ALL of the following fields, exactly as written, in this order:
 
-    Based on software by Himanshu
+    Marketplace Backend powered by Himanshu's E-Commerce Framework
     Original author: Himanshu (https://github.com/Newbie-Himanshu)
-    License: Attribution License v2.0
+    Repository: https://github.com/Newbie-Himanshu/vridhira-backend
+    License: E-Commerce Marketplace Attribution License v2.0
 
-All three fields are required. No field may be omitted, paraphrased,
-summarised, or replaced with a vague reference such as "inspired by a
-GitHub project." The attribution must:
+MANDATORY DOCUMENTATION PROPERTIES:
+  ✓ Must appear in primary API documentation (README, API.md, Swagger docs)
+  ✓ Visible on first load / above the fold
+  ✓ Hyperlinks must be ACTIVE and working
+  ✓ Applied with contrasting color (4.5:1 minimum contrast ratio)
+  ✓ Font size minimum 11px
+  ✓ All four fields present, unmodified, in exact order
+  ✓ If API docs are auto-generated, attribution must be hardcoded in template
 
-  • Be visible without expanding collapsed sections or hidden elements.
-  • Include working hyperlinks to both URLs listed above.
-  • Appear in the primary documentation file — not only in a comment,
-    footnote, changelog, or secondary file.
-
-───────────────────────────────────────────────────────────────────────────
-CONDITION 2 — UI CREDITS (Deployed Applications)
-───────────────────────────────────────────────────────────────────────────
-
-If you deploy a live application (any publicly accessible or internally
-accessible website, app, hosted service, or internal tool accessible to
-any end user) built on this software, the application MUST display visible
-credits to the original project at ALL times. Specifically:
-
-  (a) A visible credit block MUST remain present and rendered in the
-      application footer on every page of the deployed application.
-
-  (b) The credits MUST include a working link to:
-        — https://github.com/Newbie-Himanshu
-
-  (c) Credits must be fully LEGIBLE at all times. The following are
-      explicitly prohibited and each independently constitutes a violation:
-        — font-size below 10px
-        — colour contrast ratio below 3:1 against background
-        — display: none
-        — visibility: hidden
-        — opacity below 0.3
-        — position: absolute or fixed with off-screen coordinates
-          (e.g. left: -9999px, top: -9999px)
-        — z-index placing the element behind other elements
-        — any other CSS, HTML, or JavaScript technique that renders
-          the credit invisible or inaccessible to a standard user
+VIOLATIONS include:
+  • Paraphrasing, summarizing, or abbreviating the attribution
+  • Moving attribution to "hidden" documentation or changelogs
+  • Replacing with vague language like "Based on an open-source project..."
+  • Removing URLs or replacing with non-functional references
+  • Burying attribution behind login walls or access restrictions
+  • Claiming the API architecture as original work
 
 ───────────────────────────────────────────────────────────────────────────
-CONDITION 3 — CREDITS ARE ADDITIVE ONLY (Non-Removal Clause)
+CONDITION 2 — SOURCE CODE & CONFIGURATION ATTRIBUTION
 ───────────────────────────────────────────────────────────────────────────
 
-You MAY add your own credits, branding, and attribution on top of the
-existing attribution.
+ALL source code files (TypeScript, JavaScript, Python, Go, etc.) containing
+Licensor code MUST retain the original copyright header. This includes:
+  • API route handlers and controllers
+  • Service layers and business logic
+  • Database models and migrations
+  • Authentication and authorization modules
+  • Payment processing and order pipelines
+  • Vendor management systems
+  • Utility functions and helpers
 
-You MAY NOT:
-  • Remove, replace, hide, obscure, or comment-out any existing attribution
-    text, links, or copyright notices referencing Himanshu or this project.
-  • Rename, refactor, or restructure any credit components in a way
-    that removes or suppresses the original attribution from the rendered UI.
-  • Modify the copyright notice at the top of any source file to remove or
-    alter the original author line.
+REQUIRED HEADER PRESERVATION:
+  (a) EXACT TEXT at top of file:
+      /*
+       * Copyright (c) 2026 Himanshu
+       * Original source: https://github.com/Newbie-Himanshu/vridhira-backend
+       * License: E-Commerce Marketplace Attribution License v2.0
+       *
+       * [Your additions here]
+       */
 
-You MUST treat all existing attribution as a minimum floor — you build
-on top of it, never beneath it.
+  (b) You MAY:
+      • Add your own copyright notices AFTER the original header
+      • Add comments explaining your modifications
+      • Refactor and optimize the code
+
+  (c) You MAY NOT:
+      • Remove or comment-out the original header
+      • Modify the author name or repository reference
+      • Move the header elsewhere in the file
+      • Replace the header with your own copyright
+      • Delete or rewrite this LICENSE file
+
+(d) CONFIGURATION FILES also require headers:
+     • .env files: Include comment with attribution
+     • medusa-config.ts: Retain original config comments
+     • Database migrations: Include header noting origin
+     • Docker/K8s manifests: Include attribution in comments
+
+Example .env attribution:
+     # ====================================================
+     # Based on Himanshu's E-Commerce Marketplace Framework
+     # License: E-Commerce Marketplace Attribution License v2.0
+     # ====================================================
 
 ───────────────────────────────────────────────────────────────────────────
-CONDITION 4 — COPYRIGHT NOTICE PRESERVATION (Source Files)
+CONDITION 3 — DEPLOYMENT & RUNTIME ATTRIBUTION
 ───────────────────────────────────────────────────────────────────────────
 
-All copies or substantial portions of this software — whether modified or
-unmodified — MUST retain:
-  • This License file in full, unmodified, in the root of the repository.
-  • The copyright notice block at the top of every source file that contains
-    one (Author, GitHub, Copyright, License header comments).
+When the Backend Software is deployed and operational, attribution MUST be
+available in the following locations at all times:
 
-You may add additional copyright notices for your own contributions above
-the existing ones. You may not alter or delete the existing notices.
+  (a) API RESPONSE HEADERS:
+      Every API endpoint response MUST include:
+      X-Powered-By: Himanshu-Marketplace Framework v2.0
+      X-License-Attribution: https://github.com/Newbie-Himanshu
+
+  (b) ERROR RESPONSES:
+      All error pages, error logs, and error messages MUST include:
+      "System powered by Himanshu's E-Commerce Framework"
+      This applies to:
+      • 500 error pages (visible to admins)
+      • Application logs (server/application logs)
+      • Debug mode error outputs
+      • Health check endpoints (must return attribution JSON)
+
+      Example JSON response:
+      {
+        "error": "Internal Server Error",
+        "framework": "Himanshu-Marketplace-Framework v2.0",
+        "license": "https://github.com/Newbie-Himanshu/vridhira-backend"
+      }
+
+  (c) ADMIN DASHBOARD:
+      If you provide an admin interface:
+      • Footer MUST contain: "Admin system built with Himanshu's framework"
+      • System health/info page MUST list original framework
+      • Accessible via admin menu → About/System Info
+
+  (d) DATABASE/LOGS:
+      • Initial migration logs MUST reference attribution
+      • System startup logs MUST log: Initializing Marketplace Framework
+        by Himanshu - License v2.0
+      • README/changelog MUST document the original project
+
+  (e) DEPLOYMENT ARTIFACTS:
+      • Docker images: LABEL maintainer="Based on Himanshu's framework"
+      • Kubernetes manifests: Include annotations
+      • Serverless function environment: Set env vars with attribution
+      • Container registries: Description must credit Himanshu
+
+───────────────────────────────────────────────────────────────────────────
+CONDITION 4 — ARCHITECTURAL COMPONENTS DOCUMENTATION
+───────────────────────────────────────────────────────────────────────────
+
+If you include, use, or significantly base your implementation on:
+  • Order processing pipelines
+  • Vendor management systems
+  • Inventory tracking modules
+  • Payment gateway integrations
+  • Multi-tenant architecture
+  • Product categorization systems
+  • Review/rating systems
+  • Admin role-based access control
+
+You MUST document in ARCHITECTURE.md or COMPONENTS.md:
+  • Original component name from this Software
+  • Current implementation name
+  • Modifications made (Y/N + brief description)
+  • Link to original source in repository
+  • Percentage of original code retained (est.)
+
+PROHIBITED:
+  • Obscuring the origin through complete rewrite
+  • Claiming original architecture without acknowledging base
+  • Removing all evidence of original component usage
+  • Hiding implementation sources from team members
+
+───────────────────────────────────────────────────────────────────────────
+CONDITION 5 — VENDOR/PARTNER DISCLOSURE
+───────────────────────────────────────────────────────────────────────────
+
+If you are a vendor, partner, or agency deploying this Backend Software
+for a client:
+
+  (a) You MUST disclose to the client:
+      • That the backend is based on Himanshu's framework
+      • Link to: https://github.com/Newbie-Himanshu/vridhira-backend
+      • This License's terms
+
+  (b) Disclosure must be in:
+      • Project proposal/contract (technology section)
+      • Technical documentation delivered to client
+      • System architecture documentation
+
+  (c) You may NOT:
+      • Represent the Software as your own original work
+      • Hide the framework's origin from the client
+      • Claim exclusive rights to the code
+      • Prevent the client from knowing the true origin
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+BREACH DETECTION & VERIFICATION
+
+The Licensor may enforce compliance through:
+
+  1. AUTOMATED MONITORING:
+     • Crawling API endpoints and checking response headers
+     • Scanning GitHub/GitLab public repositories
+     • DNS/web scraping of publicly deployed instances
+     • Log file analysis for attribution mentions
+
+  2. DIRECT VERIFICATION:
+     • Accessing admin endpoints to verify attribution
+     • Requesting access to source code for audit
+     • Testing API error responses for proper attribution
+     • Reviewing deployment configurations
+
+  3. ESCALATION PROCESS:
+     • Initial breach notice (email, issue, PR)
+     • 3 business days to respond/acknowledge
+     • 7 calendar days to remediate (first violation)
+     • 3 calendar days to remediate (subsequent violations)
+     • Permanent termination on third+ violation
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 TERMINATION AND ENFORCEMENT
 
 1. AUTOMATIC TERMINATION
-   Any violation of Conditions 1, 2, 3, or 4 immediately and automatically
-   terminates all rights granted under this License without notice. Upon
-   termination you must immediately cease all use, distribution, and hosting
-   of the software and any derivative works.
+   Any violation immediately and automatically terminates all rights.
+   Upon termination you must:
+     • Cease all use within 24 hours
+     • Take all deployments offline within 48 hours
+     • Notify Licensor of compliance
+     • Provide proof of data migration to alternative system
+     • Provide proof of Software deletion
 
-2. CURE PERIOD AND ONE-TIME REINSTATEMENT
-   If you become aware that you are in violation, you have 7 (seven)
-   calendar days from the date you first knew, or reasonably should have
-   known, of the violation to bring yourself into full compliance. If you
-   cure the violation within this 7-day window, your rights under this
-   License are reinstated. This reinstatement is available ONCE per
-   licensee. A second violation by the same licensee results in permanent
-   and irrevocable termination with no cure period available.
+2. CURE PERIOD
+   • Pre-production violations: 14 days to cure, unlimited reinstatements
+   • Production violations (first): 7 days to cure
+   • Production violations (second+): 3 days, then permanent termination
+   • Intentional violations (deliberate removal): NO cure period
 
-3. LEGAL ACTION
-   Violations of this License constitute copyright infringement under the
-   Indian Copyright Act, 1957 and applicable international copyright
-   treaties. The Licensor reserves all rights to pursue legal remedies
-   including:
-     • Injunctive relief (takedown of infringing deployments or repositories)
-     • Damages for copyright infringement
-     • Recovery of legal costs and attorney fees
-     • Any other relief available under applicable law
+3. DAMAGES FOR BREACH
+   You agree that damages are impossible to calculate accurately, and agree
+   to pay liquidated damages upon demand:
+     • $1,000 USD per day of production violation
+     • $5,000 USD per instance of header removal
+     • $10,000 USD per hidden attribution instance
+     • $50,000 USD for vendor misrepresentation to client
+     • All legal fees, court costs, and enforcement expenses
+     • Injunctive relief to remove from production
 
-4. GOVERNING LAW AND JURISDICTION
-   This License shall be governed by and construed in accordance with the
-   laws of India. Any dispute arising from or related to this License shall
-   be subject to the exclusive jurisdiction of the courts of India. If you
-   are located outside India, you consent to the jurisdiction of Indian
-   courts for the purposes of enforcing this License.
+4. MONITORING AUTHORIZATION
+   You authorize the Licensor to:
+     • Access deployed APIs to verify attribution compliance
+     • Crawl public instances to check for violations
+     • Request access to staging/production environments for audits
+     • Scan repositories irregularly for compliance checks
+
+5. GOVERNING LAW AND JURISDICTION
+   This License is governed by the laws of India. You:
+     • Consent to exclusive jurisdiction of Indian courts
+     • Waive objections to enforcement in Indian courts
+     • Agree to bear all costs of international enforcement
+     • Acknowledge Indian Copyright Act, 1957 penalties apply
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 DISCLAIMER OF WARRANTIES
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+THE BACKEND SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING MERCHANTABILITY, FITNESS FOR PARTICULAR PURPOSE,
+AND NONINFRINGEMENT.
+
+IN NO EVENT SHALL THE LICENSOR BE LIABLE FOR:
+  • Lost revenue, lost customers, or lost business opportunity
+  • Payment processing failures or data breaches
+  • Downtime, service interruption, or loss of availability
+  • Data loss, corruption, or unauthorized access
+  • Claims from vendors, partners, or end-users
+  • Regulatory fines or compliance violations
+  • Lost profits or reduced earning capacity
+
+This applies regardless of cause and even if advised of such damages possibility.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-ACKNOWLEDGEMENT OF FRAMEWORK
+DEPENDENCIES & THIRD-PARTY LICENSES
 
-This project uses MedusaJS (https://github.com/medusajs/medusa) as its
-commerce engine, licensed separately under the MIT License by Medusa, Inc.
-This acknowledgement does not alter the terms of this License with respect
-to this codebase.
+This Backend Software uses:
+  • MedusaJS (MIT License) - https://github.com/medusajs/medusa
+  • Node.js ecosystem packages (various licenses)
+  • PostgreSQL/Database drivers (various licenses)
+  • Payment gateway SDKs (vendor-specific licenses)
+
+You MUST comply with all dependency licenses independently. This License
+applies ONLY to Himanshu's original Backend Software code, not to its
+dependencies. Consult package.json/requirements.txt for full list and
+individual license terms.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SEVERABILITY & ENTIRE AGREEMENT
+
+If any provision is deemed unenforceable:
+  • That provision is minimally modified to enforce intent
+  • All other provisions remain in full force
+  • The attribution requirements (Conditions 1-3) are ESSENTIAL
+  • Removal of these core conditions voids the entire License
+
+This License is the complete and exclusive agreement regarding the Backend
+Software and supersedes all prior negotiations, understandings, or agreements.
