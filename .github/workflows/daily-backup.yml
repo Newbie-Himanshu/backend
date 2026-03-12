@@ -1,0 +1,77 @@
+name: Daily Database Backup
+
+on:
+  schedule:
+    # Run at 2:00 AM UTC daily (adjust time based on your preference)
+    - cron: '0 2 * * *'
+  workflow_dispatch:  # Allow manual trigger from Actions tab
+
+jobs:
+  backup:
+    name: Backup Supabase Database
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up PostgreSQL client tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
+      - name: Export database from Supabase
+        env:
+          DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          # Extract database name from URL
+          DB_NAME=$(echo "$DATABASE_URL" | sed -n 's/.*\/\([^?]*\).*/\1/p')
+
+          # Create backup filename with timestamp
+          BACKUP_FILE="vridhira_backup_$(date +%Y%m%d_%H%M%S).sql"
+
+          # Export database
+          pg_dump "$DATABASE_URL" > "$BACKUP_FILE"
+          echo "Backup created: $BACKUP_FILE"
+          echo "BACKUP_FILE=$BACKUP_FILE" >> $GITHUB_ENV
+
+      - name: Upload backup to DigitalOcean Spaces
+        env:
+          DO_SPACES_BUCKET: ${{ secrets.DO_SPACES_BUCKET }}
+          DO_SPACES_REGION: ${{ secrets.DO_SPACES_REGION }}
+          DO_SPACES_ENDPOINT: ${{ secrets.DO_SPACES_ENDPOINT }}
+          DO_SPACES_ACCESS_KEY: ${{ secrets.DO_SPACES_ACCESS_KEY }}
+          DO_SPACES_SECRET_KEY: ${{ secrets.DO_SPACES_SECRET_KEY }}
+        run: |
+          # Install AWS CLI
+          pip install awscli
+
+          # Configure AWS CLI for DigitalOcean Spaces
+          aws configure set aws_access_key_id "$DO_SPACES_ACCESS_KEY"
+          aws configure set aws_secret_access_key "$DO_SPACES_SECRET_KEY"
+          aws configure set region "$DO_SPACES_REGION"
+
+          # Upload with path: backups/YYYY/MM/DD/filename.sql
+          BACKUP_PATH="backups/$(date +%Y/%m/%d)/$BACKUP_FILE"
+
+          aws s3 cp "$BACKUP_FILE" "s3://$DO_SPACES_BUCKET/$BACKUP_PATH" \
+            --endpoint-url "$DO_SPACES_ENDPOINT" \
+            --acl public-read
+
+          echo "Backup uploaded to: s3://$DO_SPACES_BUCKET/$BACKUP_PATH"
+
+      - name: Clean up local backup
+        if: always()
+        run: rm -f vridhira_backup_*.sql
+
+      - name: Notify on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '⚠️ Daily database backup failed. Check workflow logs.'
+            })
