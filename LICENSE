@@ -1,5 +1,5 @@
-Vridhira E-Commerce Storefront
-Dual-License Model
+E-Commerce Backend/Marketplace
+Dual-License Model v2.0
 
 Copyright (c) 2026 Himanshu (https://github.com/Newbie-Himanshu)
 All rights reserved.
@@ -8,189 +8,188 @@ All rights reserved.
 
 PREAMBLE
 
-This Software is released under a DUAL-LICENSE model:
+This E-Commerce Backend Software is released under a DUAL-LICENSE model:
   • FREE TIER for non-commercial and educational use
   • PAID TIER for commercial use with royalty obligations
 
-The license you are eligible for depends on your use case, not your intent.
-If you profit from this Software in any way, a Commercial License is required.
+The license you are eligible for depends on your deployment context and
+revenue generation, not your stated intentions.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 SECTION 1: GRANT OF LICENSE (DUAL-LICENSE MODEL)
 
-The Licensor (Himanshu) utilizes a Dual-License model to ensure this Software
-remains freely accessible for education and open innovation, while requiring
-fair compensation for commercial exploitation.
+The Licensor (Himanshu) utilizes a Dual-License model to ensure this Backend
+Software remains freely accessible for education and innovation, while
+requiring fair compensation for commercial enterprise use.
 
 ───────────────────────────────────────────────────────────────────────────
 1.1 NON-COMMERCIAL & EDUCATIONAL USE (FREE TIER)
 ───────────────────────────────────────────────────────────────────────────
 
-Subject to full compliance with the Attribution Conditions detailed below,
-the Licensor hereby grants you a worldwide, royalty-free, non-exclusive
-license to use, copy, modify, and distribute this Software strictly for:
+Subject to full compliance with the Attribution Conditions, the Licensor
+grants you a worldwide, royalty-free, non-exclusive license to use, modify,
+and deploy this Backend Software strictly for:
 
-  ✅ PERSONAL LEARNING
-     Self-education, portfolio building, skill development, and local tinkering
+  ✅ PERSONAL PROJECTS & LEARNING
+     Building sample projects, learning, local development, experimentation
 
-  ✅ ACADEMIC & EDUCATIONAL
-     University projects, coursework, hackathons, capstones, and internships
+  ✅ ACADEMIC & RESEARCH
+     University projects, hackathons, thesis work, open-source contributions
 
-  ✅ OPEN-SOURCE CONTRIBUTIONS
-     Contributing improvements to this project or compatible open-source projects
+  ✅ INTERNAL COMPANY USE (NON-REVENUE GENERATING)
+     Using internally within a company for operations, NOT as commercial product
 
   ✅ NON-PROFIT ORGANIZATIONS
-     Registered 501(c)(3) charities, NGOs, or educational trusts where NO revenue
-     is generated from the platform itself
+     Registered charities, NGOs where the platform is NOT monetized
 
 CONDITIONS OF FREE TIER USE:
-  • You must retain all copyright headers and attribution
-  • You must not remove or hide the attribution in your deployment
-  • You must not use this for ANY revenue-generating activity
+  • You must maintain all copyright headers in source code
+  • You must not remove attribution from documentation
+  • You must not use this to generate revenue
   • If you monetize, you MUST immediately obtain a Commercial License
+  • You must allow audit verification of compliance
 
 ───────────────────────────────────────────────────────────────────────────
 1.2 COMMERCIAL USE RESTRICTION (PAID TIER REQUIRED)
 ───────────────────────────────────────────────────────────────────────────
 
-You may NOT use this Software for Commercial Purposes under the Free Tier.
-You MUST obtain and maintain a valid Commercial License.
+You may NOT use this Backend Software for Commercial Purposes under the Free
+Tier. A valid, paid Commercial License is MANDATORY.
 
-"COMMERCIAL PURPOSES" is strictly defined as ANY use case designed to generate
-direct or indirect profit, including but not limited to:
+"COMMERCIAL PURPOSES" includes but is not limited to:
 
-  ❌ Deploying a live, revenue-generating e-commerce or multi-vendor
-     marketplace (whether you charge customers or take transaction fees)
+  ❌ Deploying a live marketplace that accepts transactions
+  ❌ Use by any registered business entity
+  ❌ Use by agencies/contractors building for paying clients
+  ❌ Offering as SaaS or managed service
+  ❌ Revenue generation: subscriptions, transaction fees, etc.
+  ❌ Integrating into a commercial product or service
 
-  ❌ Use, deployment, or testing by any registered corporate entity:
-     • Limited Company (Ltd.)
-     • Limited Liability Partnership (LLP)
-     • Partnership Firm (whether registered or not)
-     • GST-registered business (any GSTIN number)
-     • Sole proprietorship earning business income
-     • Any other legal business entity
-
-  ❌ Use by freelancers, agencies, or contractors building a project for
-     a paying client (even if the client isn't explicitly paying for
-     the software, but paying for a service that uses it)
-
-  ❌ Offering the Software as a hosted service (SaaS), white-label product,
-     or managed service to third parties for payment
-
-  ❌ Bundling or reselling the Software as part of a commercial product
-
-  ❌ Integration into any product or service where revenue is generated
-     from end-users
-
-  ❌ Deploying within a company, corporation, or organization with annual
-     revenue (regardless of whether the storefront itself is profit-center)
-
-CLEAR RULE: If you or your organization make ANY money (directly or indirectly)
-using this Software, a Commercial License is required.
+CLEAR RULE: If your organization has revenue and you deploy this Backend
+Software, a Commercial License is required. No exceptions.
 
 ───────────────────────────────────────────────────────────────────────────
 1.3 OBTAINING A COMMERCIAL LICENSE
 ───────────────────────────────────────────────────────────────────────────
 
-If you intend to use this Software for Commercial Purposes, you MUST obtain
-a separate Commercial Software License prior to first deployment.
+If you deploy this Backend Software for any Commercial Purpose, you MUST
+obtain a Commercial License BEFORE deployment.
 
-COMMERCIAL LICENSE INCLUDES:
-  ✓ Rights to deploy in production for revenue-generating purposes
-  ✓ 5-10% monthly royalty model (tiered by annual revenue)
-  ✓ Detailed terms at: COMMERCIAL-LICENSE.md
-  ✓ Formal License Agreement (COMMERCIAL-LICENSE-AGREEMENT.md)
-  ✓ Simplified monthly reporting (by 15th of each month)
-  ✓ Optional: dedicate support (negotiable)
+COMMERCIAL LICENSE COMPONENTS:
+  ✓ Production deployment rights
+  ✓ Tiered royalty model: 5% (₹0-₹50L) / 10% (₹50L+)
+  ✓ Monthly revenue reporting & royalty payment
+  ✓ Annual audit & compliance verification
+  ✓ Source code attribution requirements
+  ✓ Full legal documentation & formal agreement
 
-TO OBTAIN A COMMERCIAL LICENSE:
-  Email: himanshu@example.com
-  Subject: "Vridhira Commercial License - [Your Company Name]"
-  Include: Company name, nature of business, expected monthly revenue
+DETAILED INFORMATION:
+  → COMMERCIAL-LICENSE.md (complete terms)
+  → COMMERCIAL-LICENSE-AGREEMENT.md (formal contract)
 
-PRICING:
+TO OBTAIN A LICENSE:
+  📧 Email: hk8913114@gmail.com
+  Subject: "Commercial License - [Company Name]"
+  Include: Business name, registration number, expected revenue
+
+PRICING & TERMS:
   • 5% monthly royalty for annual revenue ₹0-₹50 Lakhs
-  • 10% monthly royalty for annual revenue ₹50 Lakhs and above
-  • Payment due by 15th of each month
-  • No upfront fees, no setup costs
+  • 10% monthly royalty for annual revenue ₹50 Lakhs+
+  • Monthly reporting due by 15th of each month
   • Minimum 12-month term
+  • No upfront setup fees
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 SECTION 2: MANDATORY ATTRIBUTION CONDITIONS
 
-These conditions apply to ALL users (both Free and Commercial Tiers).
-Attribution is NON-NEGOTIABLE and must be maintained at all times.
+These conditions are BINDING for ALL users. Attribution requirements apply
+whether you use Free or Commercial Tier. Violations trigger enforcement.
 
 ───────────────────────────────────────────────────────────────────────────
-2.1 SOURCE CODE ATTRIBUTION
+2.1 SOURCE CODE ATTRIBUTION (EVERY FILE)
 ───────────────────────────────────────────────────────────────────────────
 
-Every source code file MUST retain the original copyright notice at the top:
+EVERY source code file MUST retain the original copyright header at the top:
 
 /*
- * Vridhira E-Commerce Storefront
- * Original creator: Himanshu
+ * E-Commerce Backend/Marketplace
+ * Original Creator: Himanshu
  * GitHub: https://github.com/Newbie-Himanshu
- * License: Dual-License (Community / Commercial)
+ * License: Dual-License (Community / Commercial) v2.0
  *
- * [Your modifications below this line]
+ * [Your additions and modifications below this line]
 */
 
-You MAY NOT:
-  ✗ Remove or comment-out the original copyright header
-  ✗ Replace the original author name
-  ✗ Hide the GitHub link
-  ✗ Modify the license reference
+MANDATORY:
+  ✓ Header must be in EVERY file containing original code
+  ✓ Cannot be removed, commented-out, or modified
+  ✓ GitHub link must be active and correct
+  ✓ Original author name must remain unchanged
 
 ───────────────────────────────────────────────────────────────────────────
-2.2 PROJECT DOCUMENTATION ATTRIBUTION
+2.2 DOCUMENTATION ATTRIBUTION (README & API DOCS)
 ───────────────────────────────────────────────────────────────────────────
 
-Your README.md MUST include an "Attribution" or "Credits" section with:
+Your README.md MUST include an Attribution section:
 
 ## Attribution
 
-Built on **Vridhira E-Commerce Storefront** by [Himanshu](https://github.com/Newbie-Himanshu)
+Built on E-Commerce Backend by [Himanshu](https://github.com/Newbie-Himanshu)
 
-[View License](link-to-LICENSE.md)
+Licensed under Dual-License (Community/Commercial License v2.0)
+[View Full License](./LICENSE)
 
-REQUIREMENTS:
-  ✓ Visible without expanding collapsed sections
-  ✓ Active hyperlinks that work
-  ✓ Appears in primary README (not in secondary docs only)
-  ✓ Cannot be paraphrased or summarized
+API DOCUMENTATION must include:
 
-───────────────────────────────────────────────────────────────────────────
-2.3 DEPLOYED APPLICATION FOOTER ATTRIBUTION
-───────────────────────────────────────────────────────────────────────────
-
-If you deploy a live storefront, every page MUST include visible footer credit:
-
-"Powered by Vridhira | [Link to GitHub]"
-
-LEGIBILITY REQUIREMENTS (STRICTLY ENFORCED):
-  ✓ Font size: minimum 11px
-  ✓ Color contrast: minimum 4.5:1 ratio against background
-  ✓ Fully visible (no hiding, no tricks)
-
-PROHIBITED TECHNIQUES (VIOLATIONS):
-  ✗ display: none, visibility: hidden, opacity < 0.8
-  ✗ position: absolute/fixed with off-screen coordinates
-  ✗ z-index layering behind other elements
-  ✗ Color matching text to background
-  ✗ Font size below threshold
+```json
+{
+  "powered_by": "E-Commerce Backend",
+  "original_creator": "Himanshu",
+  "license": "Dual-License v2.0",
+  "repository": "https://github.com/Newbie-Himanshu"
+}
+```
 
 ───────────────────────────────────────────────────────────────────────────
-2.4 COMPONENT & IMPORT TRACKING
+2.3 RUNTIME ATTRIBUTION (API & DEPLOYMENT)
 ───────────────────────────────────────────────────────────────────────────
 
-If you substantially use or fork components from this Software, document them.
-Include comments in the code identifying the original source:
+API Response Headers MUST include:
 
-// Based on Vridhira checkout flow
-// Original: https://github.com/Newbie-Himanshu/vridhira-*
+```
+X-Powered-By: E-Commerce-Backend v2.0
+X-License: Dual-License by Himanshu
+X-Attribution: https://github.com/Newbie-Himanshu
+```
+
+Error Responses MUST include (visible to admins):
+
+```json
+{
+  "error": "...",
+  "powered_by": "E-Commerce Backend",
+  "attribution": "Built by Himanshu - Dual-License v2.0"
+}
+```
+
+Admin Dashboard MUST display in footer:
+
+"Admin System | Powered by E-Commerce Backend"
+
+───────────────────────────────────────────────────────────────────────────
+2.4 VENDOR/PARTNER DISCLOSURE
+───────────────────────────────────────────────────────────────────────────
+
+If you are a vendor, partner, or agency deploying this Backend for a client:
+
+  ✓ MUST disclose to client that software is based on this backend
+  ✓ Include link to repository in contract
+  ✓ Mention license requirements in statement of work
+  ✓ Include in technical documentation delivered to client
+
+Failure to disclose = ₹50,000 penalty + license suspension
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -200,127 +199,88 @@ SECTION 3: ENFORCEMENT & VIOLATIONS
 3.1 WHAT CONSTITUTES VIOLATION
 ───────────────────────────────────────────────────────────────────────────
 
-Commercial use WITHOUT a valid Commercial License:
-  ❌ Using for revenue-generating purposes
-  ❌ Deployed by registered business entity
-  ❌ Accepting payment from customers/clients
-  ❌ Any monetization whatsoever
+❌ COMMERCIAL USE WITHOUT LICENSE:
+   • Any commercial deployment without paid Commercial License
+   • Revenue generation (subscription, transaction fees, etc.)
+   • Use by registered business entity
 
-Breach of Attribution:
-  ❌ Removing copyright headers from source files
-  ❌ Hiding footer attribution in deployed app
-  ❌ Removing README attribution
-  ❌ Obscuring the original author's work
+❌ BREACH OF ATTRIBUTION:
+   • Removing copyright headers from source code
+   • Removing attribution from documentation
+   • Hiding/minimizing API header attribution
+   • False claim of original authorship
+   • Vendor failing to disclose to client
 
 ───────────────────────────────────────────────────────────────────────────
-3.2 ENFORCEMENT PROCESS
+3.2 ENFORCEMENT & DAMAGES
 ───────────────────────────────────────────────────────────────────────────
 
-STEP 1: DETECTION
-The Licensor may discover violations through:
-  • Scanning public GitHub repositories
-  • Crawling deployed instances
+DETECTION:
+  • Automated API endpoint monitoring
+  • GitHub repository scanning
+  • Public instance discovery
   • Community reports
-  • Direct audits
 
-STEP 2: FORMAL NOTICE
-Violator receives email notice within 48 hours of detection:
-  • Specific violation(s) identified
-  • Evidence provided
-  • Cure period offered (see below)
-  • Contact information for resolution
+CURE PERIODS:
+  • First violation: 7 days
+  • Second violation: 3 days
+  • Third+ violation: 0 days (immediate termination)
 
-STEP 3: CURE PERIOD
-  • First violation: 7 days to cure
-  • Second violation: 3 days to cure
-  • Third+ violation: 0 days (immediate action)
+ENFORCEMENT ACTIONS (if not cured):
+  ✗ License TERMINATED immediately
+  ✗ DMCA takedown notices to hosting/domain providers
+  ✗ Injunctive relief to cease operations
+  ✗ Legal action & damage claims pursued
 
-STEP 4: NON-COMPLIANCE ACTION
-If violation is not cured:
-  • License automatically TERMINATED
-  • Takedown notice issued
-  • Deployment/access revoked
-  • Legal action initiated
-
-───────────────────────────────────────────────────────────────────────────
-3.3 LEGAL DAMAGES
-───────────────────────────────────────────────────────────────────────────
-
-Violations constitute willful copyright infringement under the Indian
-Copyright Act, 1957. The Licensor reserves the right to pursue:
-
-  💰 FINANCIAL DAMAGES:
-     • $500-$2,500 USD per day of continuous violation
-     • $10,000 USD per instance of removed copyright header
-     • $25,000-$50,000 USD per hidden/obscured attribution block
-     • Retroactive royalties for all months of unlicensed commercial use
-       (calculated at 15% of gross revenue as penalty rate)
-
-  ⚖️ LEGAL REMEDIES:
-     • DMCA takedown notices to hosting providers
-     • Injunctive relief to cease operations immediately
-     • Seizure of domain or server access
-     • Recovery of all legal fees and court costs
-
-  📋 TAX & REGULATORY:
-     • Report to tax authorities if GST evasion evident
-     • Notification to business registrars/regulators
-
-UNLIMITED LIABILITY: There is no cap on damages claimed. The Licensor will
-pursue maximum remedies available under law.
-
-───────────────────────────────────────────────────────────────────────────
-3.4 BURDEN OF PROOF
-───────────────────────────────────────────────────────────────────────────
-
-The implementer (you) bears the burden of proving:
-  • Your use qualifies for Free Tier
-  • You have valid Commercial License
-  • All attribution is properly maintained
-  • Revenue reporting is accurate and complete
-
-Simple deployment for a registered business defaults to violation unless
-proven otherwise.
+DAMAGES:
+  💰 ₹30,000-₹1,00,000 per day of violation
+  💰 ₹75,000 per removed header
+  💰 ₹1,00,000-₹2,50,000 per hidden attribution instance
+  💰 Retroactive royalties at 15% penalty rate
+  💰 All legal and enforcement costs
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 SECTION 4: ADDITIONAL TERMS
 
 4.1 NO WARRANTY
-THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
 
-4.2 GOVERNING LAW
-This License is governed by Indian Copyright Act, 1957 and Indian Contract Act.
-Jurisdiction: Courts of Delhi, India.
+4.2 TERM & RENEWAL
+Free Tier: Perpetual (as long as conditions are met)
+Commercial Tier: 12-month minimum, auto-renewal
 
-4.3 ENTIRE AGREEMENT
-This License, combined with COMMUNITY-LICENSE.md and COMMERCIAL-LICENSE.md,
-constitute the complete agreement. All prior understandings are superseded.
+4.3 GOVERNING LAW
+This License is governed by Indian Copyright Act, 1957 and Indian Contract
+Act, 1957. Exclusive jurisdiction: Courts of Delhi, India.
+
+4.4 ENTIRE AGREEMENT
+This License combined with COMMUNITY-LICENSE.md, COMMERCIAL-LICENSE.md,
+COMMERCIAL-LICENSE-AGREEMENT.md, and PAYMENT-SCHEDULE.md constitutes the
+complete agreement.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 QUICK DECISION TREE
 
-Do you charge customers money or generate revenue using this software?
-    YES → You MUST have a Commercial License
-    NO  → Can you use the Free Tier?
+Are you deploying this backend for a business that generates revenue?
+    YES → COMMERCIAL LICENSE (PAID)
+    NO  → Is your company/organization registered?
+           YES → COMMERCIAL LICENSE (PAID)
+           NO  → COMMUNITY LICENSE (FREE)
 
-Are you a registered business entity (company, LLC, Partnership, GSTIN)?
-    YES (even if not using for this project) → You likely need Commercial License
-    NO  → Free Tier might apply
+═══════════════════════════════════════════════════════════════════════════
 
-Are you an approved non-profit with registered status?
-    YES → Free Tier (with attribution)
-    NO  → See revenue question above
+REFERENCE DOCUMENTS:
+  📄 LICENSE-INDEX.md — Complete overview & navigation
+  📄 COMMUNITY-LICENSE.md — Complete free tier terms
+  📄 COMMERCIAL-LICENSE.md — Complete paid tier terms
+  📄 COMMERCIAL-LICENSE-AGREEMENT.md — Formal contract
+  📄 PAYMENT-SCHEDULE.md — Monthly procedures
 
-Still unsure? → Ask: hk8913114@gmail.com
+QUESTIONS OR LICENSE INQUIRY:
+  📧 Email: hk8913114@gmail.com
+  🐙 GitHub: https://github.com/Newbie-Himanshu
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-For detailed information:
-  • COMMUNITY-LICENSE.md — Full free tier terms
-  • COMMERCIAL-LICENSE.md — Full commercial tier details
-  • COMMERCIAL-LICENSE-AGREEMENT.md — Formal contract template
-  • LICENSING-GUIDE.md — FAQ and decision help
-
-Questions? Contact: himanshu@example.com
+By deploying E-Commerce Backend in a commercial context without a valid
+license, you agree to the damages and enforcement terms outlined above.

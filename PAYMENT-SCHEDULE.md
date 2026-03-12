@@ -392,7 +392,7 @@ Subject: "Vridhira Payment Question - [Your Company]"
 
 **Ready to get started?**
 
-📧 Email: himanshu@example.com with your company details to receive full bank account information and official agreement.
+📧 Email: hk8913114@gmail.com with your company details to receive full bank account information and official agreement.
 
 **Let's build this together! 🚀**
 

@@ -218,4 +218,5 @@ Your support helps sustain this project and make it better for everyone.
 ---
 
 **Last Updated:** March 2026
-**Questions?** → himanshu@example.com
+**Questions?** → hk8913114@gmail.com
+**GitHub:** → https://github.com/Newbie-Himanshu
