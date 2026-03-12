@@ -1,6 +1,8 @@
-# The Marketplace — Backend
+# The Marketplace — E-Commerce Backend for Indian Artisans
 
-An India-focused e-commerce backend built on **MedusaJS v2**, extending the framework with payment, fulfilment, search, analytics, and communication integrations tailored for the Indian market.
+> ⚠️ **License Notice:** This project is **not MIT-licensed**. It uses a custom **Dual-License (Community/Commercial) v2.0**. Free for students and non-profit use. Commercial use requires a paid license with a 5–10% monthly royalty. See [LICENSE](./LICENSE) and [LICENSE-INDEX.md](./LICENSE-INDEX.md) before using this in any project.
+
+It is an India-focused e-commerce backend built on **MedusaJS v2**, extending the framework with payment, fulfilment, search, analytics, and communication integrations tailored for the Indian market.
 
 ---
 
@@ -285,7 +287,16 @@ Full engineering docs are in the [`docs/`](docs/) folder:
 
 ## License
 
-MIT
+This project is licensed under a custom **Dual-License (Community/Commercial) v2.0** — it is **not MIT**.
+
+| Use Case | License | Cost |
+|----------|---------|------|
+| Students, learners, non-profit | Community License | **Free** |
+| Commercial / revenue-generating | Commercial License | **5–10% monthly royalty** |
+
+📖 [View Full License](./LICENSE) &nbsp;·&nbsp; 🗂️ [License Index](./LICENSE-INDEX.md) &nbsp;·&nbsp; 📋 [Commercial Agreement](./COMMERCIAL-LICENSE-AGREEMENT.md)
+
+> ❓ Not sure which applies to you? See [LICENSING-GUIDE.md](./LICENSING-GUIDE.md) or email **hk8913114@gmail.com**
 
 ---
 
