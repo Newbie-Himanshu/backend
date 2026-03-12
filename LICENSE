@@ -1,0 +1,168 @@
+Attribution License
+Version 2.0 — March 2026
+
+Copyright (c) 2026 Himanshu (https://github.com/Newbie-Himanshu)
+All rights reserved.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+GRANT OF LICENSE
+
+Subject to full and continuous compliance with ALL conditions set out in this
+License, the Licensor (Himanshu) hereby grants you a worldwide,
+royalty-free, non-exclusive license to:
+
+  (a) use, copy, and run this software for personal or commercial purposes;
+  (b) modify this software and create derivative works;
+  (c) distribute copies of this software or derivative works.
+
+This grant is conditional. Any violation of the conditions below immediately
+and automatically terminates all rights granted under this License without
+notice.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+MANDATORY ATTRIBUTION CONDITIONS
+
+The following attribution conditions are NON-NEGOTIABLE and must be satisfied
+at all times. Failure to comply constitutes copyright infringement and a
+material breach of this License.
+
+───────────────────────────────────────────────────────────────────────────
+CONDITION 1 — PROJECT DOCUMENTATION ATTRIBUTION
+───────────────────────────────────────────────────────────────────────────
+
+If you use, distribute, publish, host, or deploy this software or any
+portion of it — whether the project is public or private, commercial or
+non-commercial — your project's primary documentation file (README, landing page, or equivalent) MUST
+contain a clearly visible attribution section that includes ALL of the
+following fields exactly as written:
+
+    Based on software by Himanshu
+    Original author: Himanshu (https://github.com/Newbie-Himanshu)
+    License: Attribution License v2.0
+
+All three fields are required. No field may be omitted, paraphrased,
+summarised, or replaced with a vague reference such as "inspired by a
+GitHub project." The attribution must:
+
+  • Be visible without expanding collapsed sections or hidden elements.
+  • Include working hyperlinks to both URLs listed above.
+  • Appear in the primary documentation file — not only in a comment,
+    footnote, changelog, or secondary file.
+
+───────────────────────────────────────────────────────────────────────────
+CONDITION 2 — UI CREDITS (Deployed Applications)
+───────────────────────────────────────────────────────────────────────────
+
+If you deploy a live application (any publicly accessible or internally
+accessible website, app, hosted service, or internal tool accessible to
+any end user) built on this software, the application MUST display visible
+credits to the original project at ALL times. Specifically:
+
+  (a) A visible credit block MUST remain present and rendered in the
+      application footer on every page of the deployed application.
+
+  (b) The credits MUST include a working link to:
+        — https://github.com/Newbie-Himanshu
+
+  (c) Credits must be fully LEGIBLE at all times. The following are
+      explicitly prohibited and each independently constitutes a violation:
+        — font-size below 10px
+        — colour contrast ratio below 3:1 against background
+        — display: none
+        — visibility: hidden
+        — opacity below 0.3
+        — position: absolute or fixed with off-screen coordinates
+          (e.g. left: -9999px, top: -9999px)
+        — z-index placing the element behind other elements
+        — any other CSS, HTML, or JavaScript technique that renders
+          the credit invisible or inaccessible to a standard user
+
+───────────────────────────────────────────────────────────────────────────
+CONDITION 3 — CREDITS ARE ADDITIVE ONLY (Non-Removal Clause)
+───────────────────────────────────────────────────────────────────────────
+
+You MAY add your own credits, branding, and attribution on top of the
+existing attribution.
+
+You MAY NOT:
+  • Remove, replace, hide, obscure, or comment-out any existing attribution
+    text, links, or copyright notices referencing Himanshu or this project.
+  • Rename, refactor, or restructure any credit components in a way
+    that removes or suppresses the original attribution from the rendered UI.
+  • Modify the copyright notice at the top of any source file to remove or
+    alter the original author line.
+
+You MUST treat all existing attribution as a minimum floor — you build
+on top of it, never beneath it.
+
+───────────────────────────────────────────────────────────────────────────
+CONDITION 4 — COPYRIGHT NOTICE PRESERVATION (Source Files)
+───────────────────────────────────────────────────────────────────────────
+
+All copies or substantial portions of this software — whether modified or
+unmodified — MUST retain:
+  • This License file in full, unmodified, in the root of the repository.
+  • The copyright notice block at the top of every source file that contains
+    one (Author, GitHub, Copyright, License header comments).
+
+You may add additional copyright notices for your own contributions above
+the existing ones. You may not alter or delete the existing notices.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+TERMINATION AND ENFORCEMENT
+
+1. AUTOMATIC TERMINATION
+   Any violation of Conditions 1, 2, 3, or 4 immediately and automatically
+   terminates all rights granted under this License without notice. Upon
+   termination you must immediately cease all use, distribution, and hosting
+   of the software and any derivative works.
+
+2. CURE PERIOD AND ONE-TIME REINSTATEMENT
+   If you become aware that you are in violation, you have 7 (seven)
+   calendar days from the date you first knew, or reasonably should have
+   known, of the violation to bring yourself into full compliance. If you
+   cure the violation within this 7-day window, your rights under this
+   License are reinstated. This reinstatement is available ONCE per
+   licensee. A second violation by the same licensee results in permanent
+   and irrevocable termination with no cure period available.
+
+3. LEGAL ACTION
+   Violations of this License constitute copyright infringement under the
+   Indian Copyright Act, 1957 and applicable international copyright
+   treaties. The Licensor reserves all rights to pursue legal remedies
+   including:
+     • Injunctive relief (takedown of infringing deployments or repositories)
+     • Damages for copyright infringement
+     • Recovery of legal costs and attorney fees
+     • Any other relief available under applicable law
+
+4. GOVERNING LAW AND JURISDICTION
+   This License shall be governed by and construed in accordance with the
+   laws of India. Any dispute arising from or related to this License shall
+   be subject to the exclusive jurisdiction of the courts of India. If you
+   are located outside India, you consent to the jurisdiction of Indian
+   courts for the purposes of enforcing this License.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DISCLAIMER OF WARRANTIES
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ACKNOWLEDGEMENT OF FRAMEWORK
+
+This project uses MedusaJS (https://github.com/medusajs/medusa) as its
+commerce engine, licensed separately under the MIT License by Medusa, Inc.
+This acknowledgement does not alter the terms of this License with respect
+to this codebase.
