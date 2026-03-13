@@ -120,5 +120,5 @@ export default async function codFraudTrackerHandler({
 
 export const config: SubscriberConfig = {
     event: "order.canceled",
-    context: { subscriberId: "himanshu-cod-fraud-tracker" },
+    context: { subscriberId: "Himanshu-cod-fraud-tracker" },
 }

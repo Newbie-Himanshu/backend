@@ -62,5 +62,5 @@ export default async function orderDeliveredEmailHandler({
 
 export const config: SubscriberConfig = {
     event: "order.fulfillment_delivered",
-    context: { subscriberId: "himanshu-order-delivered-email" },
+    context: { subscriberId: "Himanshu-order-delivered-email" },
 }

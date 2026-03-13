@@ -35,9 +35,10 @@ export const sendOrderOutForDeliveryWorkflow = createWorkflow(
             options: { throwIfKeyNotFound: true },
         })
 
+        const ordersAny = orders as unknown as any[]
         const notificationInput = transform(
-            { orders, awb, courier_name, tracking_url },
-            (input) => {
+            { orders: ordersAny, awb, courier_name, tracking_url },
+            (input: any) => {
                 const order = input.orders[0]
                 if (!order?.email) return null
                 return [{

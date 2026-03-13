@@ -26,7 +26,7 @@ export function orderOutForDeliveryEmail({ order, awb, courier_name, tracking_ur
             <Body style={body}>
                 {/* ── Header ── */}
                 <Section style={headerSec}>
-                    <Text style={brand}>Himanshu Marketplace</Text>
+                    <Text style={brand}>The Marketplace</Text>
                 </Section>
 
                 <Container style={container}>
@@ -157,10 +157,10 @@ export function orderOutForDeliveryEmail({ order, awb, courier_name, tracking_ur
                         <Text style={helpTitle}>Need Help?</Text>
                         <Row>
                             <Column>
-                                <Link href="https://himanshu.com/contact" style={helpLink}>Contact Support</Link>
+                                <Link href="https://Himanshu.com/contact" style={helpLink}>Contact Support</Link>
                             </Column>
                             <Column style={{ textAlign: "right" }}>
-                                <Text style={helpEmail}>support@himanshu.com</Text>
+                                <Text style={helpEmail}>support@Himanshu.com</Text>
                             </Column>
                         </Row>
                     </Section>
@@ -168,7 +168,7 @@ export function orderOutForDeliveryEmail({ order, awb, courier_name, tracking_ur
 
                 {/* ── Footer ── */}
                 <Section style={footerSec}>
-                    <Text style={footerText}>© {new Date().getFullYear()} Himanshu Marketplace · All rights reserved.</Text>
+                    <Text style={footerText}>© {new Date().getFullYear()} The Marketplace · All rights reserved.</Text>
                     <Text style={footerText}>You received this because you placed an order on Himanshu.</Text>
                 </Section>
             </Body>

@@ -684,7 +684,7 @@ const FAQ_ARTICLES_DATA = [
     title: "How can I contact Himanshu customer support?",
     description: "Complete list of support channels and response times.",
     section: "miscellaneous",
-    content: "Email: support@himanshu.com | WhatsApp: +91-XXXXX | Chat: Available 9AM-9PM IST daily. Average response: 2 hours.",
+    content: "Email: support@Himanshu.com | WhatsApp: +91-XXXXX | Chat: Available 9AM-9PM IST daily. Average response: 2 hours.",
     display_order: 29,
   },
   {

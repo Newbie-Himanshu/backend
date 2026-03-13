@@ -148,7 +148,7 @@ export default async function orderPlacedHandler({
                         Authorization: `Bearer ${resendKey}`,
                     },
                     body: JSON.stringify({
-                        from: process.env.RESEND_FROM_EMAIL ?? "no-reply@himanshu.in",
+                        from: process.env.RESEND_FROM_EMAIL ?? "no-reply@Himanshu.in",
                         to: adminEmail,
                         subject: `⚠️ Fulfillment Failed — Order #${orderId}`,
                         html: `<p><strong>Shiprocket auto-fulfillment failed</strong> for order <code>${orderId}</code>.</p><p>Error: <code>${errorMsg}</code></p><p>Please create the shipment manually in the Shiprocket dashboard.</p>`,
@@ -165,5 +165,5 @@ export default async function orderPlacedHandler({
 
 export const config: SubscriberConfig = {
     event: "order.placed",
-    context: { subscriberId: "himanshu-order-placed-fulfillment" },
+    context: { subscriberId: "Himanshu-order-placed-fulfillment" },
 }

@@ -86,5 +86,5 @@ export default async function authPasswordResetHandler({
 
 export const config: SubscriberConfig = {
     event: "auth.password_reset",
-    context: { subscriberId: "himanshu-auth-password-reset" },
+    context: { subscriberId: "Himanshu-auth-password-reset" },
 }

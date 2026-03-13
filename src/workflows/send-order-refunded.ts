@@ -37,7 +37,7 @@ export const sendOrderRefundedWorkflow = createWorkflow(
         // step-name registration error (useQueryGraphStep has a fixed step ID).
         const { order, returnRecord } = fetchOrderAndReturnStep({ id, isDirectRefund })
 
-        const notificationInput = transform({ order, returnRecord, isDirectRefund, directRefundAmount }, (input) => {
+        const notificationInput = transform({ order, returnRecord, isDirectRefund, directRefundAmount }, (input: any) => {
             if (!input.order?.email) return null
 
             // Resolve refund amount: prefer return record, fall back to Razorpay amount

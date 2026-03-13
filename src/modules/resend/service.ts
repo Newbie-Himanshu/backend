@@ -54,19 +54,19 @@ const templateMap: Record<string, (props: any) => React.ReactNode> = {
 }
 
 const subjectMap: Record<string, string> = {
-    [Templates.ORDER_PLACED]:           "✅ Order Confirmed – Himanshu Marketplace",
-    [Templates.ORDER_SHIPPED]:          "🚚 Your Order Has Shipped – Himanshu Marketplace",
-    [Templates.ORDER_IN_TRANSIT]:       "🛤️ Your Order Is In Transit – Himanshu Marketplace",
-    [Templates.ORDER_OUT_FOR_DELIVERY]: "🛵 Out for Delivery Today! – Himanshu Marketplace",
-    [Templates.ORDER_CANCELLED]:        "Order Cancelled – Himanshu Marketplace",
-    [Templates.ORDER_REFUNDED]:         "💰 Refund Initiated – Himanshu Marketplace",
-    [Templates.ORDER_DELIVERED]:        "📦 Order Delivered! – Himanshu Marketplace",
-    [Templates.PASSWORD_RESET]:         "🔐 Reset your Himanshu Marketplace password",
-    [Templates.EMAIL_VERIFICATION]:     "✉️ Verify your email – Himanshu Marketplace",
+    [Templates.ORDER_PLACED]:           "✅ Order Confirmed – The Marketplace",
+    [Templates.ORDER_SHIPPED]:          "🚚 Your Order Has Shipped – The Marketplace",
+    [Templates.ORDER_IN_TRANSIT]:       "🛤️ Your Order Is In Transit – The Marketplace",
+    [Templates.ORDER_OUT_FOR_DELIVERY]: "🛵 Out for Delivery Today! – The Marketplace",
+    [Templates.ORDER_CANCELLED]:        "Order Cancelled – The Marketplace",
+    [Templates.ORDER_REFUNDED]:         "💰 Refund Initiated – The Marketplace",
+    [Templates.ORDER_DELIVERED]:        "📦 Order Delivered! – The Marketplace",
+    [Templates.PASSWORD_RESET]:         "🔐 Reset your The Marketplace password",
+    [Templates.EMAIL_VERIFICATION]:     "✉️ Verify your email – The Marketplace",
 }
 
 /**
- * Resend Notification Module Provider for Himanshu Marketplace
+ * Resend Notification Module Provider for The Marketplace
  *
  * Handles transactional emails for all customer-facing events:
  *  - order-placed    → Order confirmation
@@ -122,7 +122,7 @@ class ResendNotificationProviderService extends AbstractNotificationProviderServ
         const emailOptions: CreateEmailOptions = {
             from:    this.options.from,
             to:      [notification.to],
-            subject: subjectMap[notification.template] ?? "Update from Himanshu Marketplace",
+            subject: subjectMap[notification.template] ?? "Update from The Marketplace",
             react:   templateFn(notification.data ?? {}) as React.ReactElement,
         }
 

@@ -31,7 +31,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       })
     }
 
-    const products = await productService.list()
+    const products = await productService.getAllProducts()
 
     res.json({ products })
   } catch (error) {
@@ -47,7 +47,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
   const productService: ProductService = req.scope.resolve("productService")
   const { name, handle, description, price, sku, category_id, stock_quantity, image_url } =
-    req.body
+    req.body as any
 
   try {
     if (!name || !handle) {

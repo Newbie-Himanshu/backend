@@ -39,7 +39,7 @@ export function orderPlacedEmail({ order }: { order: any }) {
             <Body style={body}>
                 {/* ── Header ── */}
                 <Section style={headerSec}>
-                    <Text style={brand}>Himanshu Marketplace</Text>
+                    <Text style={brand}>The Marketplace</Text>
                 </Section>
 
                 <Container style={container}>
@@ -192,7 +192,7 @@ export function orderPlacedEmail({ order }: { order: any }) {
                     {/* ── CTA Button ── */}
                     <Section style={{ textAlign: "center", padding: "8px 32px 20px" }}>
                         <Button
-                            href={`${process.env.STORE_URL || "https://himanshu.com"}/account/orders/${order?.id}`}
+                            href={`${process.env.STORE_URL || "https://Himanshu.com"}/account/orders/${order?.id}`}
                             style={ctaBtn}
                         >
                             View Order Status →
@@ -206,10 +206,10 @@ export function orderPlacedEmail({ order }: { order: any }) {
                         <Text style={helpTitle}>Need Help?</Text>
                         <Row>
                             <Column>
-                                <Text style={helpText}>📧 support@himanshu.com</Text>
+                                <Text style={helpText}>📧 support@Himanshu.com</Text>
                             </Column>
                             <Column style={{ textAlign: "right" }}>
-                                <Link href="https://himanshu.com/returns" style={helpLink}>
+                                <Link href="https://Himanshu.com/returns" style={helpLink}>
                                     Returns within 7 days
                                 </Link>
                             </Column>
@@ -219,7 +219,7 @@ export function orderPlacedEmail({ order }: { order: any }) {
 
                 {/* ── Footer ── */}
                 <Section style={footerSec}>
-                    <Text style={footerText}>© {new Date().getFullYear()} Himanshu Marketplace · All rights reserved.</Text>
+                    <Text style={footerText}>© {new Date().getFullYear()} The Marketplace · All rights reserved.</Text>
                     <Text style={footerText}>You received this because you placed an order on Himanshu.</Text>
                 </Section>
             </Body>

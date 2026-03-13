@@ -30,7 +30,7 @@ export function orderDeliveredEmail({ order }: { order: any }) {
             <Body style={body}>
                 {/* ── Header ── */}
                 <Section style={headerSec}>
-                    <Text style={brand}>Himanshu Marketplace</Text>
+                    <Text style={brand}>The Marketplace</Text>
                 </Section>
 
                 <Container style={container}>
@@ -131,7 +131,7 @@ export function orderDeliveredEmail({ order }: { order: any }) {
                         </Text>
                         <Section style={{ textAlign: "center", marginTop: 12 }}>
                             <Button
-                                href={`${process.env.STORE_URL || "https://himanshu.com"}/account/orders/${order?.id}/review`}
+                                href={`${process.env.STORE_URL || "https://Himanshu.com"}/account/orders/${order?.id}/review`}
                                 style={reviewBtn}
                             >
                                 ★ Rate Your Order
@@ -143,7 +143,7 @@ export function orderDeliveredEmail({ order }: { order: any }) {
 
                     {/* ── Shop Again CTA ── */}
                     <Section style={{ textAlign: "center", padding: "16px 32px 20px" }}>
-                        <Button href={process.env.STORE_URL || "https://himanshu.com"} style={shopBtn}>
+                        <Button href={process.env.STORE_URL || "https://Himanshu.com"} style={shopBtn}>
                             Shop Again →
                         </Button>
                     </Section>
@@ -161,7 +161,7 @@ export function orderDeliveredEmail({ order }: { order: any }) {
                                 <Text style={returnsText}>
                                     Something not right? Wrong item, damaged product, or a size issue?
                                     Contact us within <strong>7 days</strong> and we'll make it right.{" "}
-                                    <Link href="https://himanshu.com/returns" style={returnsLink}>
+                                    <Link href="https://Himanshu.com/returns" style={returnsLink}>
                                         Start a Return
                                     </Link>
                                 </Text>
@@ -172,14 +172,14 @@ export function orderDeliveredEmail({ order }: { order: any }) {
                     {/* ── Help ── */}
                     <Section style={helpSec}>
                         <Text style={helpText}>Questions? Write to us at{" "}
-                            <Link href="mailto:support@himanshu.com" style={helpLink}>support@himanshu.com</Link>
+                            <Link href="mailto:support@Himanshu.com" style={helpLink}>support@Himanshu.com</Link>
                         </Text>
                     </Section>
                 </Container>
 
                 {/* ── Footer ── */}
                 <Section style={footerSec}>
-                    <Text style={footerText}>© {new Date().getFullYear()} Himanshu Marketplace · All rights reserved.</Text>
+                    <Text style={footerText}>© {new Date().getFullYear()} The Marketplace · All rights reserved.</Text>
                     <Text style={footerText}>You received this because you placed an order on Himanshu.</Text>
                 </Section>
             </Body>

@@ -1,55 +1,20 @@
-import { Column, Entity, ManyToOne, JoinColumn, Index } from "typeorm"
+import { model } from "@medusajs/framework/utils"
+import ProductCategory from "./category"
 
-@Entity("category_seo")
-@Index(["category_id"])
-export class CategorySEO {
-  @Column({ primary: true, type: "uuid" })
-  id: string
+const CategorySEO = model.define("category_seo", {
+  id: model.id().primaryKey(),
+  category_id: model.id(),
+  meta_title: model.text().nullable(),
+  meta_description: model.text().nullable(),
+  meta_keywords: model.text().nullable(),
+  og_title: model.text().nullable(),
+  og_description: model.text().nullable(),
+  og_image: model.text().nullable(),
+  canonical_url: model.text().nullable(),
+  robots: model.text().nullable(),
+  schema_markup: model.text().nullable(),
+  is_published: model.boolean().default(true),
+  category: model.belongsTo(() => ProductCategory),
+})
 
-  @Column({ type: "uuid" })
-  category_id: string
-
-  @ManyToOne("ProductCategory", { nullable: false, onDelete: "CASCADE" })
-  @JoinColumn({ name: "category_id" })
-  category: any
-
-  @Column({ nullable: true, type: "text" })
-  meta_title: string
-
-  @Column({ nullable: true, type: "text" })
-  meta_description: string
-
-  @Column({ nullable: true, type: "text" })
-  meta_keywords: string
-
-  @Column({ nullable: true, type: "text" })
-  og_title: string
-
-  @Column({ nullable: true, type: "text" })
-  og_description: string
-
-  @Column({ nullable: true, type: "text" })
-  og_image: string
-
-  @Column({ nullable: true, type: "text" })
-  canonical_url: string
-
-  @Column({ nullable: true, type: "text" })
-  robots: string // e.g., "index, follow"
-
-  @Column({ nullable: true, type: "text" })
-  schema_markup: string // JSON-LD markup
-
-  @Column({ default: true })
-  is_published: boolean
-
-  @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
-  created_at: Date
-
-  @Column({
-    type: "timestamp",
-    default: () => "CURRENT_TIMESTAMP",
-    onUpdate: "CURRENT_TIMESTAMP",
-  })
-  updated_at: Date
-}
+export default CategorySEO

@@ -72,7 +72,7 @@ export const CategoryTreeView = ({
           )}
 
           <div className="flex-1 min-w-0">
-            <Text weight="medium" size="small" className="truncate">
+            <Text weight="plus" size="small" className="truncate">
               {category.name}
             </Text>
             <Text size="xsmall" className="text-ui-fg-subtle truncate">
@@ -80,7 +80,7 @@ export const CategoryTreeView = ({
             </Text>
           </div>
 
-          <Badge variant="neutral" size="small">
+          <Badge size="small">
             L{category.level}
           </Badge>
 

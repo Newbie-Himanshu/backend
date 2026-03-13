@@ -44,7 +44,7 @@ export const CategoryBreadcrumb = ({
               <Text size="small">{item.name}</Text>
             </Button>
           ) : (
-            <Text size="small" weight="medium">
+            <Text size="small" weight="plus">
               {item.name}
             </Text>
           )}

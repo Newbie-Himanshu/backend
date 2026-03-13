@@ -72,5 +72,5 @@ export default async function orderCancelledShiprocketHandler({
 
 export const config: SubscriberConfig = {
     event: "order.canceled",
-    context: { subscriberId: "himanshu-order-cancelled-shiprocket" },
+    context: { subscriberId: "Himanshu-order-cancelled-shiprocket" },
 }

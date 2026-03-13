@@ -85,7 +85,7 @@ type ShiprocketOrderPayload = {
 }
 
 /**
- * ShiprocketService — Logistics integration for Himanshu Marketplace
+ * ShiprocketService — Logistics integration for The Marketplace
  *
  * Provides multi-courier access (25+ couriers via Shiprocket aggregator):
  * - Delhivery, Blue Dart, FedEx, DTDC, Ecom Express, etc.

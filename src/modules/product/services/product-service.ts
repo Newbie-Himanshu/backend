@@ -1,25 +1,39 @@
 import { MedusaService } from "@medusajs/framework/utils"
-import { Product } from "../models/product"
+import Product from "../models/product"
 
-export class ProductService extends MedusaService(Product) {
+type ProductDTO = {
+  name: string
+  handle: string
+  description?: string
+  price?: number | null
+  sku?: string
+  category_id?: string | null
+  is_active?: boolean
+  stock_quantity?: number
+  image_url?: string
+}
+
+export class ProductService extends MedusaService({
+  Product,
+}) {
   /**
    * Get all products
    */
-  async getAllProducts(): Promise<Product[]> {
-    return this.list({
-      filters: { is_active: true },
-      order: { created_at: "DESC" },
-    })
+  async getAllProducts() {
+    return (this as any).listProducts(
+      { is_active: true } as any,
+      { order: { created_at: "DESC" } } as any
+    )
   }
 
   /**
    * Get products by category
    */
-  async getProductsByCategory(categoryId: string): Promise<Product[]> {
-    return this.list({
-      filters: { category_id: categoryId, is_active: true },
-      order: { created_at: "DESC" },
-    })
+  async getProductsByCategory(categoryId: string) {
+    return (this as any).listProducts(
+      { category_id: categoryId, is_active: true } as any,
+      { order: { created_at: "DESC" } } as any
+    )
   }
 
   /**
@@ -29,71 +43,47 @@ export class ProductService extends MedusaService(Product) {
     categoryId: string,
     page: number = 1,
     limit: number = 10
-  ): Promise<{ products: Product[]; total: number }> {
+  ): Promise<{ products: any[]; total: number }> {
     const skip = (page - 1) * limit
 
-    const products = await this.list({
-      filters: { category_id: categoryId, is_active: true },
-      order: { created_at: "DESC" },
-      skip,
-      take: limit,
-    })
+    const products = await (this as any).listProducts(
+      { category_id: categoryId, is_active: true } as any,
+      { order: { created_at: "DESC" }, skip, take: limit } as any
+    )
 
-    const total = await this.count({ category_id: categoryId, is_active: true })
+    const allProducts = await (this as any).listProducts({
+      category_id: categoryId,
+      is_active: true,
+    } as any) as any[]
 
-    return { products, total }
+    return { products, total: allProducts.length }
   }
 
   /**
    * Get featured products (limited number)
    */
-  async getFeaturedProducts(limit: number = 8): Promise<Product[]> {
-    return this.list({
-      filters: { is_active: true },
-      order: { created_at: "DESC" },
-      take: limit,
-    })
+  async getFeaturedProducts(limit: number = 8) {
+    return (this as any).listProducts(
+      { is_active: true } as any,
+      { order: { created_at: "DESC" }, take: limit } as any
+    )
   }
 
   /**
    * Get featured products by category
    */
-  async getFeaturedProductsByCategory(
-    categoryId: string,
-    limit: number = 6
-  ): Promise<Product[]> {
-    return this.list({
-      filters: { category_id: categoryId, is_active: true },
-      order: { created_at: "DESC" },
-      take: limit,
-    })
-  }
-
-  /**
-   * Search products
-   */
-  async searchProducts(query: string): Promise<Product[]> {
-    const qb = this.query().where((qb) =>
-      qb
-        .where(`name ILIKE :query`, { query: `%${query}%` })
-        .orWhere(`description ILIKE :query`, { query: `%${query}%` })
-        .orWhere(`handle ILIKE :query`, { query: `%${query}%` })
+  async getFeaturedProductsByCategory(categoryId: string, limit: number = 6) {
+    return (this as any).listProducts(
+      { category_id: categoryId, is_active: true } as any,
+      { order: { created_at: "DESC" }, take: limit } as any
     )
-
-    return qb.load()
   }
 
   /**
    * Get product with category info
    */
   async getProductWithCategory(productId: string): Promise<any> {
-    const product = await this.retrieve(productId)
-
-    if (product.category_id) {
-      // You can load category here when category service is available
-    }
-
-    return product
+    return (this as any).retrieveProduct(productId)
   }
 
   /**
@@ -108,8 +98,8 @@ export class ProductService extends MedusaService(Product) {
     category_id?: string
     stock_quantity?: number
     image_url?: string
-  }): Promise<Product> {
-    return this.create({
+  }) {
+    return (this as any).createProducts({
       name: data.name,
       handle: data.handle,
       description: data.description,
@@ -125,40 +115,40 @@ export class ProductService extends MedusaService(Product) {
   /**
    * Update product
    */
-  async updateProduct(
-    productId: string,
-    data: Partial<Product>
-  ): Promise<Product> {
-    await this.update(productId, data)
-    return this.retrieve(productId)
+  async updateProduct(productId: string, data: Partial<ProductDTO>) {
+    await (this as any).updateProducts([{ id: productId, ...data }])
+    return (this as any).retrieveProduct(productId)
+  }
+
+  /**
+   * Search products by name, handle, or SKU (case-insensitive substring match)
+   */
+  async searchProducts(query: string) {
+    const all = await (this as any).listProducts({ is_active: true }, {})
+    const q = query.toLowerCase()
+    return (all as any[]).filter(
+      (p: any) =>
+        p.name?.toLowerCase().includes(q) ||
+        p.handle?.toLowerCase().includes(q) ||
+        p.sku?.toLowerCase().includes(q)
+    )
   }
 
   /**
    * Soft delete product (set is_active to false)
    */
   async softDeleteProduct(productId: string): Promise<void> {
-    await this.update(productId, { is_active: false })
+    await (this as any).updateProducts([{ id: productId, is_active: false }])
   }
 
   /**
    * Get products with in-stock filter
    */
-  async getProductsInStock(): Promise<Product[]> {
-    return this.list({
-      filters: { is_active: true },
-      order: { created_at: "DESC" },
-    })
-  }
-
-  /**
-   * Get low stock products
-   */
-  async getLowStockProducts(threshold: number = 5): Promise<Product[]> {
-    const qb = this.query()
-      .where(`stock_quantity <= :threshold`, { threshold })
-      .andWhere(`is_active = :active`, { active: true })
-
-    return qb.load()
+  async getProductsInStock() {
+    return (this as any).listProducts(
+      { is_active: true } as any,
+      { order: { created_at: "DESC" } } as any
+    )
   }
 
   /**
@@ -172,7 +162,7 @@ export class ProductService extends MedusaService(Product) {
     inStock?: boolean
     page?: number
     limit?: number
-  }): Promise<{ products: Product[]; total: number }> {
+  }): Promise<{ products: any[]; total: number }> {
     const page = filters.page || 1
     const limit = filters.limit || 10
     const skip = (page - 1) * limit
@@ -183,24 +173,23 @@ export class ProductService extends MedusaService(Product) {
       queryFilters.category_id = filters.categoryId
     }
 
-    const products = await this.list({
-      filters: queryFilters,
-      order: { created_at: "DESC" },
-      skip,
-      take: limit,
-    })
+    const products = await (this as any).listProducts(
+      queryFilters,
+      { order: { created_at: "DESC" }, skip, take: limit } as any
+    ) as any[]
 
-    // Additional filtering for price range
     let filtered = products
-    if (filters.minPrice) {
-      filtered = filtered.filter((p) => p.price >= filters.minPrice)
+    if (filters.minPrice !== undefined) {
+      filtered = filtered.filter((p: any) => p.price >= filters.minPrice!)
     }
-    if (filters.maxPrice) {
-      filtered = filtered.filter((p) => p.price <= filters.maxPrice)
+    if (filters.maxPrice !== undefined) {
+      filtered = filtered.filter((p: any) => p.price <= filters.maxPrice!)
     }
 
-    const total = await this.count({ is_active: true })
+    const allActive = await (this as any).listProducts({ is_active: true } as any) as any[]
 
-    return { products: filtered, total }
+    return { products: filtered, total: allActive.length }
   }
 }
+
+export default ProductService

@@ -403,7 +403,7 @@ const UserExportWidget = () => {
       customers: customerRows,
       admins: adminRows,
     }
-    const filename = `himanshu-users-${exportFilter}-${new Date().toISOString().split("T")[0]}.json`
+    const filename = `Himanshu-users-${exportFilter}-${new Date().toISOString().split("T")[0]}.json`
     downloadFile(JSON.stringify(payload, null, 2), filename, "application/json")
     toast.success("JSON export downloaded", { description: `${merged.length} records` })
   }
@@ -415,7 +415,7 @@ const UserExportWidget = () => {
     const merged = [...customerRows, ...adminRows] as Record<string, unknown>[]
     if (!merged.length) return
     const csv = rowsToCsv(merged)
-    const filename = `himanshu-users-${exportFilter}-${new Date().toISOString().split("T")[0]}.csv`
+    const filename = `Himanshu-users-${exportFilter}-${new Date().toISOString().split("T")[0]}.csv`
     downloadFile(csv, filename, "text/csv;charset=utf-8;")
     toast.success("CSV export downloaded", { description: `${merged.length} records` })
   }

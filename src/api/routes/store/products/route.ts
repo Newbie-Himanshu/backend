@@ -1,5 +1,5 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework"
-import { ProductService } from "../../modules/product/services/product-service"
+import { ProductService } from "../../../../modules/product/services/product-service"
 
 /**
  * GET /store/products - Get all products with optional filtering
@@ -63,7 +63,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
   const productService: ProductService = req.scope.resolve("productService")
   const { name, handle, description, price, sku, category_id, stock_quantity, image_url } =
-    req.body
+    req.body as any
 
   try {
     if (!name || !handle) {

@@ -35,7 +35,7 @@ export const sendOrderDeliveredWorkflow = createWorkflow(
             options: { throwIfKeyNotFound: true },
         })
 
-        const notificationInput = transform({ orders }, ({ orders }) => {
+        const notificationInput = transform({ orders } as any, ({ orders }: { orders: any[] }) => {
             const order = orders[0]
             if (!order?.email) return null
             return [{

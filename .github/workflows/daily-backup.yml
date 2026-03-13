@@ -28,7 +28,7 @@ jobs:
           DB_NAME=$(echo "$DATABASE_URL" | sed -n 's/.*\/\([^?]*\).*/\1/p')
 
           # Create backup filename with timestamp
-          BACKUP_FILE="vridhira_backup_$(date +%Y%m%d_%H%M%S).sql"
+          BACKUP_FILE="app_backup_$(date +%Y%m%d_%H%M%S).sql"
 
           # Export database
           pg_dump "$DATABASE_URL" > "$BACKUP_FILE"
@@ -62,7 +62,7 @@ jobs:
 
       - name: Clean up local backup
         if: always()
-        run: rm -f vridhira_backup_*.sql
+        run: rm -f app_backup_*.sql
 
       - name: Notify on failure
         if: failure()

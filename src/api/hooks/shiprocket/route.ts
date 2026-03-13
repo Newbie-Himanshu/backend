@@ -38,7 +38,7 @@ import { sendOrderOutForDeliveryWorkflow } from "../../../workflows/send-order-o
  *
  * Register URL in: Shiprocket Dashboard → Settings → Webhooks
  *   Dev:  https://<ngrok-url>/hooks/shiprocket  (use X-Shiprocket-Token header)
- *   Prod: https://admin.himanshu.in/hooks/shiprocket  (use X-Shiprocket-Token header)
+ *   Prod: https://admin.Himanshu.in/hooks/shiprocket  (use X-Shiprocket-Token header)
  *   Legacy (if header injection unavailable): append ?token=<SHIPROCKET_WEBHOOK_TOKEN>
  *
  * ┌─────────────────────┬──────────────────────────────┬──────────────────────────────────┐

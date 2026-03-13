@@ -1,7 +1,7 @@
 import pino from "pino"
 
 /**
- * Shared structured logger for Himanshu backend.
+ * Shared structured logger for E-Commerce Backend.
  *
  * - Development:  pretty-printed, human-readable via pino-pretty
  * - Production:   newline-delimited JSON — pipe to any log aggregator (Datadog, Loki, etc.)

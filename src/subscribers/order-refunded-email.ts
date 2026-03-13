@@ -31,5 +31,5 @@ export default async function orderRefundedEmailHandler({
 
 export const config: SubscriberConfig = {
     event: "return.created",
-    context: { subscriberId: "himanshu-order-refunded-email" },
+    context: { subscriberId: "Himanshu-order-refunded-email" },
 }

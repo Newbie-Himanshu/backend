@@ -1,5 +1,5 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework";
-import { CategoryService } from "../../../../modules/product/services/category-service";
+import { CategoryService } from "../../../../../modules/product/services/category-service";
 
 /**
  * GET /store/categories/[id] - Get category with full hierarchy info
@@ -50,7 +50,7 @@ export async function PUT(req: MedusaRequest, res: MedusaResponse) {
     "categoryService"
   );
   const { id } = req.params;
-  const updates = req.body;
+  const updates = req.body as any;
 
   try {
     if (!id) {

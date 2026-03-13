@@ -77,7 +77,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   const faqService: FaqArticleService = req.scope.resolve(FAQ_ARTICLES_MODULE)
 
   const { title, description, section, content, is_visible, display_order } =
-    req.body
+    req.body as any
 
   if (!title || !description || !section || !content) {
     return res

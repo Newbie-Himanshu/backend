@@ -160,7 +160,7 @@ const SetupGuide = ({
       <ol className="flex flex-col gap-1 list-decimal list-inside">
         {[
           "Open Google Cloud Console → IAM & Admin → Service Accounts",
-          "Create a new service account (e.g. himanshu-ga4-reader)",
+          "Create a new service account (e.g. Himanshu-ga4-reader)",
           "Click the account → Keys → Add Key → JSON — download the file",
           "In Google Analytics → Admin → Property Access Management → Add the service account email with Viewer role",
           "Paste the entire JSON file contents as a single-line string into GA_SERVICE_ACCOUNT_KEY in your .env",

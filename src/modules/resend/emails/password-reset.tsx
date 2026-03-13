@@ -19,10 +19,10 @@ export function passwordResetEmail({
     return (
         <Html>
             <Head />
-            <Preview>Reset your Himanshu Marketplace password</Preview>
+            <Preview>Reset your The Marketplace password</Preview>
             <Body style={body}>
                 <Section style={headerSec}>
-                    <Text style={brand}>Himanshu Marketplace</Text>
+                    <Text style={brand}>The Marketplace</Text>
                 </Section>
                 <Container style={container}>
                     <Section style={{ padding: "32px 0 16px" }}>
@@ -57,7 +57,7 @@ export function passwordResetEmail({
 
                     <Hr style={hr} />
                     <Text style={footer}>
-                        © {new Date().getFullYear()} Himanshu Marketplace · India
+                        © {new Date().getFullYear()} The Marketplace · India
                     </Text>
                 </Container>
             </Body>

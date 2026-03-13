@@ -14,7 +14,7 @@ type FulfillmentModuleService = {
 }
 
 /**
- * India Region Seed Script for Himanshu Marketplace
+ * India Region Seed Script for The Marketplace
  *
  * Sets up:
  * - India region with INR currency
@@ -79,7 +79,7 @@ export default async function seedIndia({ container }: ExecArgs) {
 
         // ── Step 3: Create fulfillment set (shipping type) ──
         const existingFulfillmentSets = await fulfillmentService
-            .listFulfillmentSets({ name: "himanshu-fulfillment" })
+            .listFulfillmentSets({ name: "Himanshu-fulfillment" })
             .catch(() => [] as Array<{ id: string }>)
 
         let fulfillmentSet: { id: string }
@@ -87,7 +87,7 @@ export default async function seedIndia({ container }: ExecArgs) {
             fulfillmentSet = existingFulfillmentSets[0]
         } else {
             fulfillmentSet = await fulfillmentService.createFulfillmentSets({
-                name: "himanshu-fulfillment",
+                name: "Himanshu-fulfillment",
                 type: "shipping",
             })
         }
@@ -106,7 +106,7 @@ export default async function seedIndia({ container }: ExecArgs) {
         logger.info("      - Free Shipping (on orders above ₹499)")
     } catch (error) {
         const message = error instanceof Error ? error.message : String(error)
-        logger.error(`❌ Seed failed: ${message}`, error instanceof Error ? error : new Error(message))
+        logger.error(error instanceof Error ? error : new Error(message))
         logger.info("Tip: Make sure migrations have run first: yarn medusa db:migrate")
         throw error
     }

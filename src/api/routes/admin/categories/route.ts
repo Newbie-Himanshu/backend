@@ -42,7 +42,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     "categoryService"
   );
   const { name, handle, description, parent_category_id, sort_order } =
-    req.body;
+    req.body as any;
 
   try {
     if (!name || !handle) {

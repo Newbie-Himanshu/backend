@@ -29,5 +29,5 @@ export default async function orderCancelledEmailHandler({
 
 export const config: SubscriberConfig = {
     event: "order.canceled",
-    context: { subscriberId: "himanshu-order-cancelled-email" },
+    context: { subscriberId: "Himanshu-order-cancelled-email" },
 }

@@ -15234,6 +15234,62 @@ __metadata:
   languageName: node
   linkType: hard
 
+"e-commerce-backend@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "e-commerce-backend@workspace:."
+  dependencies:
+    "@alpha-solutions/medusa-image-alt": "npm:^1.1.0"
+    "@codee-sh/medusa-plugin-automations": "npm:^1.0.10"
+    "@codee-sh/medusa-plugin-notification-emails": "npm:^1.0.0"
+    "@google-analytics/data": "npm:^5.2.1"
+    "@lambdacurry/medusa-product-reviews": "npm:^1.3.0"
+    "@lambdacurry/medusa-webhooks": "npm:^1.1.4"
+    "@medusajs/admin-sdk": "npm:2.13.1"
+    "@medusajs/cli": "npm:2.13.1"
+    "@medusajs/framework": "npm:2.13.1"
+    "@medusajs/medusa": "npm:2.13.1"
+    "@medusajs/test-utils": "npm:2.13.1"
+    "@react-email/components": "npm:1.0.8"
+    "@react-email/preview-server": "npm:5.2.8"
+    "@rsc-labs/medusa-documents-v2": "npm:^0.2.11"
+    "@secretlint/secretlint-rule-preset-recommend": "npm:^7.0.0"
+    "@swc/core": "npm:^1.7.28"
+    "@swc/jest": "npm:^0.2.36"
+    "@types/jest": "npm:^29.5.13"
+    "@types/node": "npm:^25.3.0"
+    "@types/react": "npm:^18.3.2"
+    "@types/react-dom": "npm:^18.2.25"
+    "@typescript-eslint/eslint-plugin": "npm:^6.0.0"
+    "@typescript-eslint/parser": "npm:^6.0.0"
+    "@variablevic/google-analytics-medusa": "npm:^0.1.1"
+    algoliasearch: "npm:^5.49.0"
+    bullmq: "npm:5.70.1"
+    eslint: "npm:^8.0.0"
+    eslint-plugin-no-secrets: "npm:^0.8.9"
+    eslint-plugin-security: "npm:^2.0.0"
+    ioredis: "npm:^5.9.3"
+    jest: "npm:^29.7.0"
+    lucide-react: "npm:^0.577.0"
+    medusa-plugin-razorpay-v2: "npm:^0.1.4"
+    medusa-variant-images: "npm:^1.1.4"
+    meilisearch: "npm:^0.55.0"
+    pino: "npm:^10.3.1"
+    pino-pretty: "npm:^13.1.3"
+    prop-types: "npm:^15.8.1"
+    razorpay: "npm:^2.9.6"
+    react: "npm:^18.3.1"
+    react-dom: "npm:^18.3.1"
+    react-email: "npm:latest"
+    redis: "npm:^5.11.0"
+    resend: "npm:6.9.2"
+    secretlint: "npm:^7.0.0"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:^5.6.2"
+    vite: "npm:^5.4.14"
+    yalc: "npm:^1.0.0-pre.53"
+  languageName: unknown
+  linkType: soft
+
 "eastasianwidth@npm:^0.2.0":
   version: 0.2.0
   resolution: "eastasianwidth@npm:0.2.0"
@@ -24287,62 +24343,6 @@ __metadata:
   checksum: 10c0/0b8686f9f9aa44012e9bd5eabf287ae0cde409b9a2854c5a2335cb83920c957668ac5876e3f0d158dd424744ac411a7270e64128556b451ed3bec875ef18534d
   languageName: node
   linkType: hard
-
-"vridhira-marketplace@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "vridhira-marketplace@workspace:."
-  dependencies:
-    "@alpha-solutions/medusa-image-alt": "npm:^1.1.0"
-    "@codee-sh/medusa-plugin-automations": "npm:^1.0.10"
-    "@codee-sh/medusa-plugin-notification-emails": "npm:^1.0.0"
-    "@google-analytics/data": "npm:^5.2.1"
-    "@lambdacurry/medusa-product-reviews": "npm:^1.3.0"
-    "@lambdacurry/medusa-webhooks": "npm:^1.1.4"
-    "@medusajs/admin-sdk": "npm:2.13.1"
-    "@medusajs/cli": "npm:2.13.1"
-    "@medusajs/framework": "npm:2.13.1"
-    "@medusajs/medusa": "npm:2.13.1"
-    "@medusajs/test-utils": "npm:2.13.1"
-    "@react-email/components": "npm:1.0.8"
-    "@react-email/preview-server": "npm:5.2.8"
-    "@rsc-labs/medusa-documents-v2": "npm:^0.2.11"
-    "@secretlint/secretlint-rule-preset-recommend": "npm:^7.0.0"
-    "@swc/core": "npm:^1.7.28"
-    "@swc/jest": "npm:^0.2.36"
-    "@types/jest": "npm:^29.5.13"
-    "@types/node": "npm:^25.3.0"
-    "@types/react": "npm:^18.3.2"
-    "@types/react-dom": "npm:^18.2.25"
-    "@typescript-eslint/eslint-plugin": "npm:^6.0.0"
-    "@typescript-eslint/parser": "npm:^6.0.0"
-    "@variablevic/google-analytics-medusa": "npm:^0.1.1"
-    algoliasearch: "npm:^5.49.0"
-    bullmq: "npm:5.70.1"
-    eslint: "npm:^8.0.0"
-    eslint-plugin-no-secrets: "npm:^0.8.9"
-    eslint-plugin-security: "npm:^2.0.0"
-    ioredis: "npm:^5.9.3"
-    jest: "npm:^29.7.0"
-    lucide-react: "npm:^0.577.0"
-    medusa-plugin-razorpay-v2: "npm:^0.1.4"
-    medusa-variant-images: "npm:^1.1.4"
-    meilisearch: "npm:^0.55.0"
-    pino: "npm:^10.3.1"
-    pino-pretty: "npm:^13.1.3"
-    prop-types: "npm:^15.8.1"
-    razorpay: "npm:^2.9.6"
-    react: "npm:^18.3.1"
-    react-dom: "npm:^18.3.1"
-    react-email: "npm:latest"
-    redis: "npm:^5.11.0"
-    resend: "npm:6.9.2"
-    secretlint: "npm:^7.0.0"
-    ts-node: "npm:^10.9.2"
-    typescript: "npm:^5.6.2"
-    vite: "npm:^5.4.14"
-    yalc: "npm:^1.0.0-pre.53"
-  languageName: unknown
-  linkType: soft
 
 "walker@npm:^1.0.8":
   version: 1.0.8

@@ -30,5 +30,5 @@ export default async function orderPlacedEmailHandler({
 
 export const config: SubscriberConfig = {
     event: "order.placed",
-    context: { subscriberId: "himanshu-order-placed-email" },
+    context: { subscriberId: "Himanshu-order-placed-email" },
 }
