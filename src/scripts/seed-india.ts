@@ -106,7 +106,7 @@ export default async function seedIndia({ container }: ExecArgs) {
         logger.info("      - Free Shipping (on orders above ₹499)")
     } catch (error) {
         const message = error instanceof Error ? error.message : String(error)
-        logger.error(`❌ Seed failed: ${message}`, error instanceof Error ? error : new Error(message))
+        logger.error(error instanceof Error ? error : new Error(message))
         logger.info("Tip: Make sure migrations have run first: yarn medusa db:migrate")
         throw error
     }

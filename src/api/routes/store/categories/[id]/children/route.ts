@@ -1,5 +1,5 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework";
-import { CategoryService } from "../../../../../modules/product/services/category-service";
+import { CategoryService } from "../../../../../../modules/product/services/category-service";
 
 /**
  * GET /store/categories/[id]/children - Get direct children of a category

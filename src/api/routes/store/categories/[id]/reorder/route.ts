@@ -1,5 +1,5 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework";
-import { CategoryService } from "../../../../../modules/product/services/category-service";
+import { CategoryService } from "../../../../../../modules/product/services/category-service";
 
 /**
  * POST /store/categories/[id]/reorder - Reorder category children
@@ -16,7 +16,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     "categoryService"
   );
   const { id } = req.params;
-  const { children } = req.body;
+  const { children } = req.body as any;
 
   try {
     if (!id) {

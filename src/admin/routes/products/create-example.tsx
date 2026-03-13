@@ -189,7 +189,7 @@ const CreateProductPage = () => {
           />
           {formData.category_id && (
             <div className="mt-3 p-3 bg-ui-bg-subtle rounded">
-              <Text size="small" weight="medium" className="mb-2">
+              <Text size="small" weight="plus" className="mb-2">
                 Selected Category Path:
               </Text>
               <CategoryBreadcrumb categoryId={formData.category_id} />

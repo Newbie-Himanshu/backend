@@ -38,8 +38,8 @@ export const sendOrderInTransitWorkflow = createWorkflow(
         })
 
         const notificationInput = transform(
-            { orders, awb, courier_name, tracking_url, current_city },
-            (input) => {
+            { orders, awb, courier_name, tracking_url, current_city } as any,
+            (input: any) => {
                 const order = input.orders[0]
                 if (!order?.email) return null
                 return [{

@@ -1,50 +1,20 @@
-import { Column, Entity, ManyToOne, JoinColumn, Index } from "typeorm"
+import { model } from "@medusajs/framework/utils"
+import ProductCategory from "./category"
 
-@Entity("product")
-@Index(["category_id"])
-@Index(["handle"])
-export class Product {
-  @Column({ primary: true, type: "uuid" })
-  id: string
+const Product = model.define("product", {
+  id: model.id().primaryKey(),
+  name: model.text(),
+  description: model.text().nullable(),
+  handle: model.text().unique().nullable(),
+  price: model.bigNumber().nullable(),
+  sku: model.text().nullable(),
+  category_id: model.id().nullable(),
+  is_active: model.boolean().default(true),
+  stock_quantity: model.number().default(0),
+  image_url: model.text().nullable(),
+  category: model.belongsTo(() => ProductCategory, {
+    foreignKey: "category_id",
+  }),
+})
 
-  @Column()
-  name: string
-
-  @Column({ nullable: true, type: "text" })
-  description: string
-
-  @Column({ nullable: true, unique: true })
-  handle: string
-
-  @Column({ nullable: true, type: "decimal", precision: 10, scale: 2 })
-  price: number
-
-  @Column({ nullable: true })
-  sku: string
-
-  @Column({ nullable: true, type: "uuid" })
-  category_id: string | null
-
-  @ManyToOne("ProductCategory", { nullable: true, onDelete: "SET NULL", lazy: true })
-  @JoinColumn({ name: "category_id" })
-  category: any | null
-
-  @Column({ default: true })
-  is_active: boolean
-
-  @Column({ type: "int", default: 0 })
-  stock_quantity: number
-
-  @Column({ nullable: true, type: "text" })
-  image_url: string
-
-  @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
-  created_at: Date
-
-  @Column({
-    type: "timestamp",
-    default: () => "CURRENT_TIMESTAMP",
-    onUpdate: "CURRENT_TIMESTAMP",
-  })
-  updated_at: Date
-}
+export default Product

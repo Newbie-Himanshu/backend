@@ -1,6 +1,6 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework";
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils";
-import { CategoryService } from "../../modules/product/services/category-service";
+import { CategoryService } from "../../../../modules/product/services/category-service";
 
 /**
  * GET /store/categories - Get full category tree or root categories
@@ -49,7 +49,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     "categoryService"
   );
   const { name, handle, description, parent_category_id, sort_order } =
-    req.body;
+    req.body as any;
 
   try {
     if (!name || !handle) {

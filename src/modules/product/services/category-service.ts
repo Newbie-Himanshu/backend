@@ -1,38 +1,43 @@
-import { MedusaService } from "@medusajs/framework/utils";
-import { ProductCategory } from "../models/category";
-import { DataSource } from "typeorm";
+import { MedusaService } from "@medusajs/framework/utils"
+import ProductCategory from "../models/category"
 
 interface CategoryTree {
-  id: string;
-  name: string;
-  handle: string;
-  level: number;
-  children?: CategoryTree[];
+  id: string
+  name: string
+  handle: string
+  level: number
+  children?: CategoryTree[]
 }
 
 interface CategoryBreadcrumb {
-  id: string;
-  name: string;
-  handle: string;
-  level: number;
+  id: string
+  name: string
+  handle: string
+  level: number
 }
 
-export class CategoryService extends MedusaService(ProductCategory) {
-  private dataSource: DataSource;
+export type CategoryDTO = {
+  id?: string
+  name: string
+  handle: string
+  description?: string
+  parent_category_id?: string | null
+  sort_order?: number
+  level?: number
+  path?: string
+}
 
-  constructor(container: any) {
-    super(container);
-    this.dataSource = container.resolve("database");
-  }
-
+export class CategoryService extends MedusaService({
+  ProductCategory,
+}) {
   /**
    * Get all root categories (level 0)
    */
-  async getRootCategories(): Promise<ProductCategory[]> {
-    return this.list({
-      filters: { parent_category_id: null },
-      order: { sort_order: "ASC", name: "ASC" },
-    });
+  async getRootCategories() {
+    return this.listProductCategories(
+      { parent_category_id: null } as any,
+      { order: { sort_order: "ASC", name: "ASC" } } as any
+    )
   }
 
   /**
@@ -43,20 +48,20 @@ export class CategoryService extends MedusaService(ProductCategory) {
     categoryId: string,
     maxDepth: number = 6
   ): Promise<CategoryTree> {
-    const category = await this.retrieve(categoryId);
+    const category = await this.retrieveProductCategory(categoryId)
 
     const tree: CategoryTree = {
       id: category.id,
-      name: category.name,
-      handle: category.handle,
-      level: category.level,
-    };
+      name: category.name as string,
+      handle: category.handle as string,
+      level: category.level as number,
+    }
 
-    if (category.level < maxDepth) {
-      const children = await this.list({
-        filters: { parent_category_id: categoryId },
-        order: { sort_order: "ASC", name: "ASC" },
-      });
+    if ((category.level as number) < maxDepth) {
+      const children = await this.listProductCategories(
+        { parent_category_id: categoryId } as any,
+        { order: { sort_order: "ASC", name: "ASC" } } as any
+      )
 
       if (children.length > 0) {
         tree.children = await Promise.all(
@@ -66,122 +71,117 @@ export class CategoryService extends MedusaService(ProductCategory) {
               children: childTree.children,
             }))
           )
-        );
+        )
       }
     }
 
-    return tree;
+    return tree
   }
 
   /**
    * Get full category tree from root with all descendants
    */
   async getFullCategoryTree(maxDepth: number = 6): Promise<CategoryTree[]> {
-    const rootCategories = await this.getRootCategories();
+    const rootCategories = await this.getRootCategories()
     return Promise.all(
       rootCategories.map((cat) => this.getCategoryTree(cat.id, maxDepth))
-    );
+    )
   }
 
   /**
    * Get all children at a specific level below a category
    */
-  async getChildrenAtLevel(
-    parentId: string,
-    childLevel: number
-  ): Promise<ProductCategory[]> {
-    return this.list({
-      filters: { parent_category_id: parentId, level: childLevel },
-      order: { sort_order: "ASC", name: "ASC" },
-    });
+  async getChildrenAtLevel(parentId: string, childLevel: number) {
+    return this.listProductCategories(
+      { parent_category_id: parentId, level: childLevel } as any,
+      { order: { sort_order: "ASC", name: "ASC" } } as any
+    )
   }
 
   /**
    * Get direct children of a category
    */
-  async getDirectChildren(parentId: string): Promise<ProductCategory[]> {
-    return this.list({
-      filters: { parent_category_id: parentId },
-      order: { sort_order: "ASC", name: "ASC" },
-    });
+  async getDirectChildren(parentId: string) {
+    return this.listProductCategories(
+      { parent_category_id: parentId } as any,
+      { order: { sort_order: "ASC", name: "ASC" } } as any
+    )
   }
 
   /**
    * Get all descendants of a category (flat list)
    */
-  async getAllDescendants(categoryId: string): Promise<ProductCategory[]> {
-    const category = await this.retrieve(categoryId);
-    const descendants: ProductCategory[] = [];
+  async getAllDescendants(categoryId: string) {
+    const descendants: any[] = []
 
     const traverse = async (parentId: string) => {
-      const children = await this.getDirectChildren(parentId);
-      descendants.push(...children);
+      const children = await this.getDirectChildren(parentId)
+      descendants.push(...children)
 
       for (const child of children) {
-        await traverse(child.id);
+        await traverse(child.id)
       }
-    };
+    }
 
-    await traverse(categoryId);
-    return descendants;
+    await traverse(categoryId)
+    return descendants
   }
 
   /**
    * Get breadcrumb path for a category
    */
   async getCategoryBreadcrumb(categoryId: string): Promise<CategoryBreadcrumb[]> {
-    const breadcrumb: CategoryBreadcrumb[] = [];
-    let currentId: string | null = categoryId;
+    const breadcrumb: CategoryBreadcrumb[] = []
+    let currentId: string | null = categoryId
 
     while (currentId) {
-      const category = await this.retrieve(currentId);
+      const category = await this.retrieveProductCategory(currentId)
       breadcrumb.unshift({
         id: category.id,
-        name: category.name,
-        handle: category.handle,
-        level: category.level,
-      });
-      currentId = category.parent_category_id;
+        name: category.name as string,
+        handle: category.handle as string,
+        level: category.level as number,
+      })
+      currentId = category.parent_category_id as string | null
     }
 
-    return breadcrumb;
+    return breadcrumb
   }
 
   /**
    * Get breadcrumb as string (e.g., "Electronics > Computers > Laptops")
    */
   async getCategoryBreadcrumbString(categoryId: string): Promise<string> {
-    const breadcrumb = await this.getCategoryBreadcrumb(categoryId);
-    return breadcrumb.map((b) => b.name).join(" > ");
+    const breadcrumb = await this.getCategoryBreadcrumb(categoryId)
+    return breadcrumb.map((b) => b.name).join(" > ")
   }
 
   /**
    * Create category with automatic level calculation
    */
   async createCategory(data: {
-    name: string;
-    handle: string;
-    description?: string;
-    parent_category_id?: string;
-    sort_order?: number;
-  }): Promise<ProductCategory> {
-    let level = 0;
-    let path = `/`;
+    name: string
+    handle: string
+    description?: string
+    parent_category_id?: string
+    sort_order?: number
+  }) {
+    let level = 0
+    let path = `/`
 
     if (data.parent_category_id) {
-      const parent = await this.retrieve(data.parent_category_id);
-      level = parent.level + 1;
-      path = `${parent.path}${parent.id}/`;
+      const parent = await this.retrieveProductCategory(data.parent_category_id)
+      level = (parent.level as number) + 1
+      path = `${parent.path}${parent.id}/`
 
-      // Prevent going deeper than 6 levels
       if (level > 6) {
         throw new Error(
           "Cannot create category deeper than 6 levels. Maximum depth reached."
-        );
+        )
       }
     }
 
-    return this.create({
+    return this.createProductCategories({
       name: data.name,
       handle: data.handle,
       description: data.description,
@@ -189,68 +189,61 @@ export class CategoryService extends MedusaService(ProductCategory) {
       level,
       path,
       sort_order: data.sort_order || 0,
-    });
+    } as any)
   }
 
   /**
    * Update category and recalculate descendants if parent changes
    */
-  async updateCategory(
-    categoryId: string,
-    data: Partial<ProductCategory>
-  ): Promise<ProductCategory> {
-    const category = await this.retrieve(categoryId);
+  async updateCategory(categoryId: string, data: Partial<CategoryDTO>) {
+    const category = await this.retrieveProductCategory(categoryId)
 
-    // If parent changes, recalculate level and path for all descendants
     if (
       data.parent_category_id &&
       data.parent_category_id !== category.parent_category_id
     ) {
-      const newParent = await this.retrieve(data.parent_category_id);
+      const newParent = await this.retrieveProductCategory(data.parent_category_id)
 
-      if (newParent.level >= 6) {
-        throw new Error("Cannot move category: parent is at maximum depth");
+      if ((newParent.level as number) >= 6) {
+        throw new Error("Cannot move category: parent is at maximum depth")
       }
 
-      // Update level and path
-      const newLevel = newParent.level + 1;
-      const newPath = `${newParent.path}${newParent.id}/`;
+      const newLevel = (newParent.level as number) + 1
+      const newPath = `${newParent.path}${newParent.id}/`
 
-      await this.update(categoryId, {
+      await this.updateProductCategories([{
+        id: categoryId,
         ...data,
         level: newLevel,
         path: newPath,
-      });
+      }] as any)
 
-      // Recalculate all descendants
-      await this.recalculateDescendantLevelsAndPaths(categoryId);
+      await this.recalculateDescendantLevelsAndPaths(categoryId)
     } else {
-      await this.update(categoryId, data);
+      await this.updateProductCategories([{ id: categoryId, ...data }] as any)
     }
 
-    return this.retrieve(categoryId);
+    return this.retrieveProductCategory(categoryId)
   }
 
   /**
    * Recalculate levels and paths for all descendants
    */
-  private async recalculateDescendantLevelsAndPaths(
-    categoryId: string
-  ): Promise<void> {
-    const children = await this.getDirectChildren(categoryId);
+  private async recalculateDescendantLevelsAndPaths(categoryId: string): Promise<void> {
+    const children = await this.getDirectChildren(categoryId)
 
     for (const child of children) {
-      const parent = await this.retrieve(categoryId);
-      const newLevel = parent.level + 1;
-      const newPath = `${parent.path}${parent.id}/`;
+      const parent = await this.retrieveProductCategory(categoryId)
+      const newLevel = (parent.level as number) + 1
+      const newPath = `${parent.path}${parent.id}/`
 
-      await this.update(child.id, {
+      await this.updateProductCategories([{
+        id: child.id,
         level: newLevel,
         path: newPath,
-      });
+      }] as any)
 
-      // Recursively update descendants
-      await this.recalculateDescendantLevelsAndPaths(child.id);
+      await this.recalculateDescendantLevelsAndPaths(child.id)
     }
   }
 
@@ -258,48 +251,45 @@ export class CategoryService extends MedusaService(ProductCategory) {
    * Delete category and cascade delete all descendants
    */
   async deleteCategory(categoryId: string): Promise<void> {
-    // Get all descendants
-    const descendants = await this.getAllDescendants(categoryId);
+    const descendants = await this.getAllDescendants(categoryId)
 
-    // Delete all descendants (cascade will handle this, but let's be explicit)
     for (const descendant of descendants) {
-      await this.delete(descendant.id);
+      await this.deleteProductCategories([descendant.id] as any)
     }
 
-    // Delete the category itself
-    await this.delete(categoryId);
+    await this.deleteProductCategories([categoryId] as any)
+  }
+
+  /**
+   * Search categories by name or handle (case-insensitive substring match)
+   */
+  async searchCategories(query: string) {
+    const all = await (this as any).listProductCategories({}, {})
+    const q = query.toLowerCase()
+    return (all as any[]).filter(
+      (cat: any) =>
+        cat.name?.toLowerCase().includes(q) ||
+        cat.handle?.toLowerCase().includes(q)
+    )
   }
 
   /**
    * Get categories by level
    */
-  async getCategoriesByLevel(level: number): Promise<ProductCategory[]> {
-    return this.list({
-      filters: { level },
-      order: { sort_order: "ASC", name: "ASC" },
-    });
-  }
-
-  /**
-   * Search categories by name or handle
-   */
-  async searchCategories(query: string): Promise<ProductCategory[]> {
-    const qb = this.query().where((qb) =>
-      qb
-        .where(`name ILIKE :query`, { query: `%${query}%` })
-        .orWhere(`handle ILIKE :query`, { query: `%${query}%` })
-    );
-
-    return qb.load();
+  async getCategoriesByLevel(level: number) {
+    return this.listProductCategories(
+      { level } as any,
+      { order: { sort_order: "ASC", name: "ASC" } } as any
+    )
   }
 
   /**
    * Get category with full path info (for response serialization)
    */
   async getCategoryWithFullPath(categoryId: string): Promise<any> {
-    const category = await this.retrieve(categoryId);
-    const breadcrumb = await this.getCategoryBreadcrumb(categoryId);
-    const directChildren = await this.getDirectChildren(categoryId);
+    const category = await this.retrieveProductCategory(categoryId)
+    const breadcrumb = await this.getCategoryBreadcrumb(categoryId)
+    const directChildren = await this.getDirectChildren(categoryId)
 
     return {
       ...category,
@@ -307,7 +297,7 @@ export class CategoryService extends MedusaService(ProductCategory) {
       breadcrumb_string: breadcrumb.map((b) => b.name).join(" > "),
       direct_children_count: directChildren.length,
       all_descendants_count: (await this.getAllDescendants(categoryId)).length,
-    };
+    }
   }
 
   /**
@@ -317,7 +307,9 @@ export class CategoryService extends MedusaService(ProductCategory) {
     categoryUpdates: Array<{ id: string; sort_order: number }>
   ): Promise<void> {
     for (const { id, sort_order } of categoryUpdates) {
-      await this.update(id, { sort_order });
+      await this.updateProductCategories([{ id, sort_order }] as any)
     }
   }
 }
+
+export default CategoryService

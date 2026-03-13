@@ -34,7 +34,7 @@ export async function PUT(req: MedusaRequest, res: MedusaResponse) {
     "categoryService"
   );
   const { id } = req.params;
-  const updates = req.body;
+  const updates = req.body as any;
 
   try {
     if (!id) {

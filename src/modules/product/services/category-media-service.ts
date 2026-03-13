@@ -1,7 +1,22 @@
 import { MedusaService } from "@medusajs/framework/utils"
-import { CategoryMedia } from "../models/category-media"
+import CategoryMedia from "../models/category-media"
 
-export class CategoryMediaService extends MedusaService(CategoryMedia) {
+type MediaDTO = {
+  category_id: string
+  media_type: "image" | "icon" | "banner" | "thumbnail"
+  url: string
+  alt_text?: string
+  mime_type?: string
+  file_size?: number
+  width?: number
+  height?: number
+  is_primary?: boolean
+  sort_order?: number
+}
+
+export class CategoryMediaService extends MedusaService({
+  CategoryMedia,
+}) {
   /**
    * Upload media for category
    */
@@ -15,13 +30,19 @@ export class CategoryMediaService extends MedusaService(CategoryMedia) {
     width?: number
     height?: number
     is_primary?: boolean
-  }): Promise<CategoryMedia> {
-    // If this is primary and is_primary is true, unset others
+  }) {
     if (data.is_primary) {
-      await this.update(data.category_id, { is_primary: false })
+      const existing = await (this as any).listCategoryMedias(
+        { category_id: data.category_id, is_primary: true } as any
+      ) as any[]
+      await Promise.all(
+        existing.map((m: any) =>
+          (this as any).updateCategoryMedias([{ id: m.id, is_primary: false }])
+        )
+      )
     }
 
-    return this.create({
+    return (this as any).createCategoryMedias({
       ...data,
       is_primary: data.is_primary || false,
       sort_order: 0,
@@ -31,20 +52,22 @@ export class CategoryMediaService extends MedusaService(CategoryMedia) {
   /**
    * Get media by category
    */
-  async getMediaByCategory(categoryId: string): Promise<CategoryMedia[]> {
-    return this.list({
-      filters: { category_id: categoryId },
-      order: { sort_order: "ASC", created_at: "DESC" },
-    })
+  async getMediaByCategory(categoryId: string) {
+    return (this as any).listCategoryMedias(
+      { category_id: categoryId } as any,
+      { order: { sort_order: "ASC", created_at: "DESC" } } as any
+    )
   }
 
   /**
    * Get primary image for category
    */
-  async getPrimaryImage(categoryId: string): Promise<CategoryMedia | null> {
-    const media = await this.list({
-      filters: { category_id: categoryId, media_type: "image", is_primary: true },
-    })
+  async getPrimaryImage(categoryId: string) {
+    const media = await (this as any).listCategoryMedias({
+      category_id: categoryId,
+      media_type: "image",
+      is_primary: true,
+    } as any) as any[]
 
     return media.length > 0 ? media[0] : null
   }
@@ -52,10 +75,12 @@ export class CategoryMediaService extends MedusaService(CategoryMedia) {
   /**
    * Get icon for category
    */
-  async getIcon(categoryId: string): Promise<CategoryMedia | null> {
-    const icons = await this.list({
-      filters: { category_id: categoryId, media_type: "icon", is_primary: true },
-    })
+  async getIcon(categoryId: string) {
+    const icons = await (this as any).listCategoryMedias({
+      category_id: categoryId,
+      media_type: "icon",
+      is_primary: true,
+    } as any) as any[]
 
     return icons.length > 0 ? icons[0] : null
   }
@@ -63,10 +88,11 @@ export class CategoryMediaService extends MedusaService(CategoryMedia) {
   /**
    * Get banner for category
    */
-  async getBanner(categoryId: string): Promise<CategoryMedia | null> {
-    const banners = await this.list({
-      filters: { category_id: categoryId, media_type: "banner" },
-    })
+  async getBanner(categoryId: string) {
+    const banners = await (this as any).listCategoryMedias({
+      category_id: categoryId,
+      media_type: "banner",
+    } as any) as any[]
 
     return banners.length > 0 ? banners[0] : null
   }
@@ -75,24 +101,23 @@ export class CategoryMediaService extends MedusaService(CategoryMedia) {
    * Set primary media
    */
   async setPrimaryMedia(mediaId: string, categoryId: string): Promise<void> {
-    // Unset all other primary media for this category
-    const allMedia = await this.list({
-      filters: { category_id: categoryId, is_primary: true },
-    })
+    const allMedia = await (this as any).listCategoryMedias({
+      category_id: categoryId,
+      is_primary: true,
+    } as any) as any[]
 
     for (const media of allMedia) {
-      await this.update(media.id, { is_primary: false })
+      await (this as any).updateCategoryMedias([{ id: media.id, is_primary: false }])
     }
 
-    // Set this as primary
-    await this.update(mediaId, { is_primary: true })
+    await (this as any).updateCategoryMedias([{ id: mediaId, is_primary: true }])
   }
 
   /**
    * Delete media
    */
   async deleteMedia(mediaId: string): Promise<void> {
-    await this.delete(mediaId)
+    await (this as any).deleteCategoryMedias([mediaId])
   }
 
   /**
@@ -102,12 +127,12 @@ export class CategoryMediaService extends MedusaService(CategoryMedia) {
     mediaUpdates: Array<{ id: string; sort_order: number }>
   ): Promise<void> {
     for (const { id, sort_order } of mediaUpdates) {
-      await this.update(id, { sort_order })
+      await (this as any).updateCategoryMedias([{ id, sort_order }])
     }
   }
 
   /**
-   * Get responsive image variants (for different sizes)
+   * Get responsive image variants
    */
   async getResponsiveImages(categoryId: string): Promise<{
     thumbnail?: string
@@ -122,8 +147,6 @@ export class CategoryMediaService extends MedusaService(CategoryMedia) {
       return {}
     }
 
-    // This would integrate with your image processing service
-    // For now, returning the base URL
     return {
       original: image.url,
       thumbnail: `${image.url}?size=thumbnail`,
@@ -168,3 +191,5 @@ export class CategoryMediaService extends MedusaService(CategoryMedia) {
     return { valid: true }
   }
 }
+
+export default CategoryMediaService

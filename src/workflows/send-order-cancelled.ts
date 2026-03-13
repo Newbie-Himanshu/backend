@@ -34,7 +34,7 @@ export const sendOrderCancelledWorkflow = createWorkflow(
             options: { throwIfKeyNotFound: true },
         })
 
-        const notificationInput = transform({ orders }, ({ orders }) => {
+        const notificationInput = transform({ orders: orders as any }, ({ orders }: any) => {
             const order = orders[0]
             if (!order?.email) return null
             return [{

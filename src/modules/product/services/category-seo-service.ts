@@ -1,16 +1,31 @@
 import { MedusaService } from "@medusajs/framework/utils"
-import { CategorySEO } from "../models/category-seo"
+import CategorySEO from "../models/category-seo"
 
-export class CategorySEOService extends MedusaService(CategorySEO) {
+type CategorySEODTO = {
+  category_id: string
+  meta_title?: string
+  meta_description?: string
+  meta_keywords?: string
+  og_title?: string
+  og_description?: string
+  og_image?: string
+  canonical_url?: string
+  robots?: string
+  schema_markup?: string
+  is_published?: boolean
+}
+
+export class CategorySEOService extends MedusaService({
+  CategorySEO,
+}) {
   /**
    * Get or create SEO data for a category
    */
-  async getOrCreateSEO(categoryId: string): Promise<CategorySEO> {
+  async getOrCreateSEO(categoryId: string) {
     try {
-      return await this.retrieve(categoryId)
+      return await (this as any).retrieveCategorySeo(categoryId)
     } catch (error) {
-      // Create default SEO
-      return this.create({
+      return (this as any).createCategorySeos({
         category_id: categoryId,
         meta_title: "",
         meta_description: "",
@@ -27,15 +42,11 @@ export class CategorySEOService extends MedusaService(CategorySEO) {
   /**
    * Update SEO data for a category
    */
-  async updateSEO(
-    categoryId: string,
-    data: Partial<CategorySEO>
-  ): Promise<CategorySEO> {
+  async updateSEO(categoryId: string, data: Partial<CategorySEODTO>) {
     try {
-      return await this.update(categoryId, data)
+      return await (this as any).updateCategorySeos([{ id: categoryId, ...data }])
     } catch (error) {
-      // If doesn't exist, create it
-      return this.create({
+      return (this as any).createCategorySeos({
         ...data,
         category_id: categoryId,
       })
@@ -49,7 +60,7 @@ export class CategorySEOService extends MedusaService(CategorySEO) {
     categoryId: string,
     categoryName: string,
     categoryDescription?: string
-  ): Promise<CategorySEO> {
+  ) {
     const seoData = {
       meta_title: `${categoryName} | Your Store`,
       meta_description: categoryDescription
@@ -85,12 +96,10 @@ export class CategorySEOService extends MedusaService(CategorySEO) {
   /**
    * Get SEO data for multiple categories
    */
-  async getSEOMultiple(categoryIds: string[]): Promise<CategorySEO[]> {
-    return this.list({
-      filters: {
-        category_id: categoryIds,
-      },
-    })
+  async getSEOMultiple(categoryIds: string[]) {
+    return (this as any).listCategorySeos({
+      category_id: categoryIds,
+    } as any)
   }
 
   /**
@@ -127,25 +136,22 @@ export class CategorySEOService extends MedusaService(CategorySEO) {
     let score = 0
     const issues: string[] = []
 
-    // Check meta title
-    if (seo.meta_title && seo.meta_title.length >= 30 && seo.meta_title.length <= 60) {
+    if (seo.meta_title && (seo.meta_title as string).length >= 30 && (seo.meta_title as string).length <= 60) {
       score += 20
     } else {
       issues.push("Meta title needs optimization (30-60 characters)")
     }
 
-    // Check meta description
     if (
       seo.meta_description &&
-      seo.meta_description.length >= 120 &&
-      seo.meta_description.length <= 160
+      (seo.meta_description as string).length >= 120 &&
+      (seo.meta_description as string).length <= 160
     ) {
       score += 20
     } else {
       issues.push("Meta description needs optimization (120-160 characters)")
     }
 
-    // Check OG data
     if (seo.og_title) score += 10
     else issues.push("Missing OG title")
 
@@ -155,14 +161,14 @@ export class CategorySEOService extends MedusaService(CategorySEO) {
     if (seo.og_image) score += 10
     else issues.push("Missing OG image")
 
-    // Check schema
     if (seo.schema_markup) score += 20
     else issues.push("Missing structured data (schema markup)")
 
-    // Check canonical
     if (seo.canonical_url) score += 10
     else issues.push("Missing canonical URL")
 
     return { score, issues }
   }
 }
+
+export default CategorySEOService

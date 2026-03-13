@@ -121,12 +121,12 @@ export const CategorySelector = ({
                   className="flex-1"
                   onClick={() => handleSelect(category.id)}
                 >
-                  <Text weight="medium" size="small">
+                  <Text weight="plus" size="small">
                     {category.name}
                   </Text>
                 </div>
 
-                <Badge variant="neutral" size="small">
+                <Badge size="small">
                   L{category.level}
                 </Badge>
               </div>
@@ -150,7 +150,7 @@ export const CategorySelector = ({
 
   return (
     <div>
-      {label && <Text weight="medium" size="small" className="mb-2">{label}</Text>}
+      {label && <Text weight="plus" size="small" className="mb-2">{label}</Text>}
 
       <div className="relative">
         <button
@@ -176,7 +176,6 @@ export const CategorySelector = ({
                 placeholder="Search categories..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                icon={<Search size={14} />}
                 type="text"
               />
             </div>

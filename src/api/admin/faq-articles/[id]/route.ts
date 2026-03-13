@@ -45,7 +45,7 @@ export async function PATCH(req: MedusaRequest, res: MedusaResponse) {
   const faqService: FaqArticleService = req.scope.resolve(FAQ_ARTICLES_MODULE)
 
   try {
-    const article = await faqService.updateArticle(id, req.body)
+    const article = await faqService.updateArticle(id, req.body as any)
     return res.json({ article })
   } catch (error) {
     console.error("Error updating FAQ article:", error)

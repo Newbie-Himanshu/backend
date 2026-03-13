@@ -186,14 +186,12 @@ export const useCategoryManagement = () => {
  * Hook to search categories
  */
 export const useCategorySearch = (query: string) => {
-  return useQuery<{ categories: Category[] }>(
-    {
-      queryKey: ["categories-search", query],
-      queryFn: () =>
-        sdk.client.fetch(`/admin/categories?search=${encodeURIComponent(query)}`),
-    },
-    { enabled: !!query }
-  )
+  return useQuery<{ categories: Category[] }>({
+    queryKey: ["categories-search", query],
+    queryFn: () =>
+      sdk.client.fetch(`/admin/categories?search=${encodeURIComponent(query)}`),
+    enabled: !!query,
+  })
 }
 
 /**

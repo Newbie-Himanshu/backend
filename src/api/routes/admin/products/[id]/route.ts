@@ -13,7 +13,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       return res.status(400).json({ error: "Product ID is required" })
     }
 
-    const product = await productService.retrieve(id as string)
+    const product = await productService.getProductWithCategory(id as string)
 
     res.json({ product })
   } catch (error) {
@@ -29,7 +29,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 export async function PUT(req: MedusaRequest, res: MedusaResponse) {
   const productService: ProductService = req.scope.resolve("productService")
   const { id } = req.params
-  const updates = req.body
+  const updates = req.body as any
 
   try {
     if (!id) {

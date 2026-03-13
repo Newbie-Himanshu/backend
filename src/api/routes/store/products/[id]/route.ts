@@ -1,5 +1,5 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework"
-import { ProductService } from "../../../../modules/product/services/product-service"
+import { ProductService } from "../../../../../modules/product/services/product-service"
 
 /**
  * GET /store/products/[id] - Get product details
@@ -13,7 +13,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       return res.status(400).json({ error: "Product ID is required" })
     }
 
-    const product = await productService.retrieve(id as string)
+    const product = await productService.getProductWithCategory(id as string)
 
     if (!product || !product.is_active) {
       return res.status(404).json({ error: "Product not found" })
@@ -33,7 +33,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 export async function PUT(req: MedusaRequest, res: MedusaResponse) {
   const productService: ProductService = req.scope.resolve("productService")
   const { id } = req.params
-  const updates = req.body
+  const updates = req.body as any
 
   try {
     if (!id) {

@@ -7,6 +7,18 @@ import { getRedisClient } from "../lib/redis-client"
 
 const log = logger.child({ module: "middlewares" })
 
+// ── Redis Lua Script: Atomic INCR + EXPIRE ────────────────────────────────────
+// Increments a counter and sets its expiry in one atomic operation.
+// Prevents race conditions where a process crashes between INCR and EXPIRE.
+const INCR_WITH_TTL_LUA = `local key = KEYS[1]
+local ttl = tonumber(ARGV[1])
+local count = redis.call('INCR', key)
+if count == 1 then
+  redis.call('EXPIRE', key, ttl)
+end
+return count
+`
+
 // ── Trusted-proxy IP resolution ───────────────────────────────────────────────
 // Read once at module init — never on hot path.
 //
@@ -81,7 +93,7 @@ function verifyCsrfToken(
   req: MedusaRequest,
   res: MedusaResponse,
   next: MedusaNextFunction
-): void {
+): unknown {
   // Skip for safe methods or public endpoints
   if (!['POST', 'PUT', 'DELETE', 'PATCH'].includes(req.method)) {
     return next()
@@ -146,7 +158,7 @@ async function otpSendRateLimiter(
   req: MedusaRequest,
   res: MedusaResponse,
   next: MedusaNextFunction
-): Promise<void> {
+): Promise<unknown> {
   const clientIp = getClientIp(req)
   const rateLimitKey = `otp:send:${clientIp}`
 
@@ -191,7 +203,7 @@ async function cartCompletionLock(
   req: MedusaRequest,
   res: MedusaResponse,
   next: MedusaNextFunction
-): Promise<void> {
+): Promise<unknown> {
   // Extract cart ID from /store/carts/:id/complete
   const segments = req.path.split("/")
   const cartIdx = segments.indexOf("carts")
@@ -287,7 +299,7 @@ async function authRateLimiter(
   req: MedusaRequest,
   res: MedusaResponse,
   next: MedusaNextFunction
-): Promise<void> {
+): Promise<unknown> {
   const ip = getClientIp(req)   // safe — only trusts X-Forwarded-For from TRUSTED_PROXY_IPS
   const rlKey = `rl:auth:${ip}`
 
@@ -343,7 +355,7 @@ async function otpVerifyRateLimiter(
   req: MedusaRequest,
   res: MedusaResponse,
   next: MedusaNextFunction
-): Promise<void> {
+): Promise<unknown> {
   const ip = getClientIp(req)
   const rlKey = `rl:otp-verify:${ip}`
 
@@ -396,7 +408,7 @@ async function faqQueryRateLimiter(
   req: MedusaRequest,
   res: MedusaResponse,
   next: MedusaNextFunction
-): Promise<void> {
+): Promise<unknown> {
   const ip    = getClientIp(req)
   const rlKey = `rl:faq-query:${ip}`
 
@@ -512,9 +524,10 @@ async function requireVerifiedPurchase(
     if (fullName) body.display_name = fullName
 
     return next()
-    } catch (err) {
+  } catch (err) {
     log.error({ err }, "ReviewMiddleware error")
     return res.status(500).json({ message: "Failed to verify purchase eligibility." })
+  }
 }
 
 // ── Security Headers Middleware ───────────────────────────────────────────────────
@@ -617,25 +630,10 @@ function cacheControlMiddleware(
  * @see https://docs.medusajs.com/learn/fundamentals/api-routes/protected-routes
  */
 export default defineMiddlewares({
-  // ── Security Headers + Cache Control (Applied Globally) ─────────────────────
-  // Sets HSTS, CSP, X-Frame-Options, and other security headers on every response.
-  // Also prevents caching of sensitive endpoints to avoid data leakage.
-  // This is a critical first defense against XSS, clickjacking, protocol downgrade attacks.
-  onRequest: [securityHeaders, cacheControlMiddleware],
-
-  // ── Global Error Handler ──────────────────────────────────────────────────
-  // Overrides Medusa's default error handler for ALL API routes (store + admin).
-  // Rules:
-  //   MedusaError → send the typed message (already user-safe, Medusa-typed)
-  //   Any other Error → log full stack internally, send a sanitized generic message
-  // This prevents raw third-party errors (Shiprocket, MSG91, DB driver) from
-  // leaking internal stack traces, table names, or API details to clients.
-  // Docs: https://docs.medusajs.com/learn/fundamentals/api-routes/errors#override-error-handler
   errorHandler: (
     err: MedusaError | (Error & { type?: string; status?: number }),
     req: MedusaRequest,
     res: MedusaResponse,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _next: MedusaNextFunction
   ) => {
     const isMedusaError =
@@ -643,14 +641,11 @@ export default defineMiddlewares({
       typeof (err as any).type === "string"
 
     if (isMedusaError) {
-      // MedusaErrors map to typed HTTP status codes.
-      // Fall back to 400 if no status is set (client-caused errors).
       const status = (err as any).status ?? 400
       res.status(status).json({ type: (err as any).type, message: err.message })
       return
     }
 
-    // Non-MedusaError: log full detail server-side, send sanitized message to client.
     log.error(
       { err, path: req.path, method: req.method },
       "Unhandled non-Medusa error escaped route handler"
@@ -660,8 +655,12 @@ export default defineMiddlewares({
       message: "An unexpected error occurred. Please try again or contact support.",
     })
   },
-
   routes: [
+    // ── Global security headers (applied to all routes) ───────────────────────
+    {
+      matcher: "/**",
+      middlewares: [securityHeaders, cacheControlMiddleware],
+    },
     // ── CSRF Token Protection (Defense-in-depth) ───────────────────────────────
     // Generates CSRF tokens on GET requests and validates on POST/PUT/DELETE.
     // This prevents cross-site form submissions from forging state-changing requests.
@@ -861,12 +860,12 @@ export default defineMiddlewares({
     {
       matcher: "/admin/custom/razorpay/*/capture",
       method: ["POST"],
-      middlewares: [authenticate("admin")],
+      middlewares: [authenticate("admin", ["session", "bearer", "api-key"])],
     },
     {
       matcher: "/admin/custom/razorpay/*/refund",
       method: ["POST"],
-      middlewares: [authenticate("admin")],
+      middlewares: [authenticate("admin", ["session", "bearer", "api-key"])],
     },
 
     // ── Admin COD Fraud Management ───────────────────────────────────────────────
@@ -875,7 +874,7 @@ export default defineMiddlewares({
     {
       matcher: "/admin/custom/cod-fraud*",
       method: ["POST"],
-      middlewares: [authenticate("admin")],
+      middlewares: [authenticate("admin", ["session", "bearer", "api-key"])],
     },
   ],
 })

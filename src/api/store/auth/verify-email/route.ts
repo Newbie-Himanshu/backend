@@ -109,7 +109,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
             metadata: { email_verified: true, email_verified_at: new Date().toISOString() },
         })
 
-        log.info({ customerId, email }, "Customer ${customerId} (${email}) verified`)
+        log.info({ customerId, email }, `Customer ${customerId} (${email}) verified`)
         return res.status(200).json({ verified: true, email })
 
     } catch (err) {
