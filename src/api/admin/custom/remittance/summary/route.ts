@@ -19,6 +19,13 @@ import ShiprocketService from "../../../../../services/shiprocket"
  *   "window_from": "2025-11-23",
  *   "window_to": "2026-02-21"
  * }
+ *
+ * ── Dependency Resolution ──────────────────────────────────────
+ * ShiprocketService is a utility class (stateless API client) — not a Medusa
+ * module. It's safe to instantiate directly and does not require DI registration.
+ * This avoids unnecessary bloat in the DI container for simple utility classes.
+ * If in the future ShiprocketService needs to be injected elsewhere with lifecycle
+ * management, it can be converted to a Module and registered in medusa-config.ts.
  */
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
     try {
@@ -28,6 +35,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
             })
         }
 
+        // ✅ Direct instantiation is correct for utility services (stateless API clients)
+        // ShiprocketService is NOT registered in the DI container — no need to resolve via req.scope
         const shiprocketService = new ShiprocketService()
         const summary = await shiprocketService.getRemittanceSummary()
 
