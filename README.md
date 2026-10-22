@@ -1,8 +1,36 @@
 # The Marketplace — E-Commerce Backend for Indian Artisans
 
-> ⚠️ **License Notice:** This project is **not MIT-licensed**. Commercial use is **prohibited by default**. Commercial rights are granted only through an explicit, signed Commercial License Agreement. Review [LICENSE](./LICENSE), [COMMERCIAL-LICENSE.md](./COMMERCIAL-LICENSE.md), and [LICENSING-GUIDE.md](./LICENSING-GUIDE.md).
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
+[![MedusaJS](https://img.shields.io/badge/MedusaJS-v2-7c3aed.svg)](https://medusajs.com)
+[![TypeScript](https://img.shields.io/badge/TypeScript-ready-3178c6.svg)](https://www.typescriptlang.org)
+[![Node](https://img.shields.io/badge/Node-%E2%89%A5%2020-339933.svg)](https://nodejs.org)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](./CONTRIBUTING.md)
 
-It is an India-focused e-commerce backend built on **MedusaJS v2**, extending the framework with payment, fulfilment, search, analytics, and communication integrations tailored for the Indian market.
+> 🇮🇳 A **free and open-source** e-commerce backend made for the Indian market — UPI, Cash on Delivery with OTP, Shiprocket shipping, GST-ready regions, and a ₹-first admin analytics dashboard.
+
+**The Marketplace** is an India-focused e-commerce backend built on **MedusaJS v2**, extending the framework with payment, fulfilment, search, analytics, and communication integrations tailored for the Indian market.
+
+---
+
+## Why This Project
+
+Most open-source commerce engines are built for Western markets. Indian sellers need a different set of tools out of the box:
+
+- **Payments Indians actually use** — UPI, cards, net banking, wallets via Razorpay, plus Cash on Delivery.
+- **COD you can trust** — OTP verification before delivery confirmation, with rate limiting against abuse.
+- **Local logistics** — Shiprocket integration with automatic AWB assignment and order status webhooks.
+- **India-ready setup** — seed scripts for India regions and GST taxes.
+- **Insights in ₹** — a full GA4 analytics dashboard inside the Medusa admin panel.
+
+It is free to use, modify, and deploy under the **Apache 2.0** license.
+
+---
+
+## Project Status
+
+This is a **backend-only** project (no storefront is included). It is built on MedusaJS v2.13.1 and is being brought back up to date after a pause, so expect dependency updates. Issues, ideas, and pull requests are welcome.
+
+<!-- Add screenshots or a short demo GIF of the admin panel here, e.g. ![Admin dashboard](docs/screenshots/dashboard.png) -->
 
 ---
 
@@ -295,18 +323,42 @@ Full engineering docs are in the [`docs/`](docs/) folder:
 
 ---
 
+## Contributing
+
+Contributions are welcome — bug reports, fixes, docs, and new India-focused integrations (more payment gateways, couriers, GST invoicing, regional languages).
+
+1. Fork the repo and create a branch for your change
+2. Make your changes and run `yarn test:unit`
+3. Open a pull request describing what you changed and why
+
+Please read [CONTRIBUTING.md](./CONTRIBUTING.md) and the [Code of Conduct](./CODE_OF_CONDUCT.md) first. Found a security issue? See [SECURITY.md](./SECURITY.md) instead of opening a public issue.
+
+---
+
+## Roadmap
+
+- [ ] Update to the latest MedusaJS v2 release
+- [ ] Add screenshots and a public demo
+- [ ] Add a starter storefront for Indian shoppers
+- [ ] More Indian payment and courier integrations
+- [ ] GST invoice improvements
+
+---
+
 ## License
 
-This project is licensed under a custom restricted model and is **not MIT**.
+This project is licensed under the **[Apache License 2.0](./LICENSE)**.
 
 | Use Case | Access |
 |----------|--------|
-| Non-commercial, academic, non-profit | Allowed under public license terms |
-| Any commercial, revenue, SaaS/PaaS, or corporate deployment | Not allowed unless explicitly approved and signed |
+| Personal, academic, non-profit | ✅ Allowed |
+| Commercial, SaaS/PaaS, or corporate deployment | ✅ Allowed |
+| Modify and redistribute | ✅ Allowed — keep the copyright and license notices, and mark files you changed |
+| Use the project name or branding as your own | ❌ Not granted by the license |
 
-For commercial use, do not deploy first and ask later. Contact **hk8913114@gmail.com** to request a strict B2B license scoped to your organization and intended deployment.
+Third-party plugins and dependencies keep their own licenses.
 
-📖 [View Full License](./LICENSE) &nbsp;·&nbsp; 📘 [Licensing Guide](./LICENSING-GUIDE.md) &nbsp;·&nbsp; 📜 [Commercial Terms](./COMMERCIAL-LICENSE.md) &nbsp;·&nbsp; 📝 [Commercial Agreement Template](./COMMERCIAL-LICENSE-AGREEMENT.md) &nbsp;·&nbsp; ⚠️ [Fork Owner License Renewal Notice](./FORK_LICENSE_RENEWAL_NOTICE.md)
+Copyright 2026 Himanshu.
 
 ---
 
